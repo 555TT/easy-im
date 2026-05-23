@@ -11,7 +11,8 @@ PID_DIR="$ROOT_DIR/pids"
 # 运行时输出目录：日志与 pid 文件
 mkdir -p "$LOG_DIR" "$PID_DIR"
 
-# 读取 VM_IP，供启动完成后打印 Navicat 连接地址
+# 读取 VM_IP，供启动完成后打印宿主机访问地址
+# 例如前端页面、Navicat、Jaeger 等
 # shellcheck disable=SC1091
 source "$GO_IM_DIR/infra.host.env"
 
@@ -65,5 +66,7 @@ start_service "easy-im-web" "cd '$WEB_DIR' && if [ ! -d node_modules ]; then npm
 # 输出常用信息
 echo "All services have been started in background."
 echo "Logs directory: $LOG_DIR"
+echo "Frontend in VM: http://127.0.0.1:3000"
+echo "Frontend from Windows host: http://${VM_IP}:3000"
 echo "MySQL for Navicat: ${VM_IP}:13306"
 echo "MongoDB for Navicat: ${VM_IP}:47017"
