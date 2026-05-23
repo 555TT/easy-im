@@ -4,8 +4,9 @@ set -euo pipefail
 # 项目根目录与常用目录
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GO_IM_DIR="$ROOT_DIR/go-im"
-PID_DIR="$ROOT_DIR/pids"
-LOG_DIR="$ROOT_DIR/logs"
+RUN_DIR="/opt/easy-im-run"
+PID_DIR="$RUN_DIR/pids"
+LOG_DIR="$RUN_DIR/logs"
 
 # 读取 VM_IP，用于打印宿主机/外部访问地址
 # shellcheck disable=SC1091

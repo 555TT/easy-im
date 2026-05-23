@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 项目根目录与 pid 目录
+# 项目根目录与运行时目录
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GO_IM_DIR="$ROOT_DIR/go-im"
-PID_DIR="$ROOT_DIR/pids"
+RUN_DIR="/opt/easy-im-run"
+PID_DIR="$RUN_DIR/pids"
 
 # 按 pid 文件停止单个服务；如果进程已不存在则清理残留 pid 文件
 stop_service() {

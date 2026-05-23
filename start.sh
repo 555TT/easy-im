@@ -5,10 +5,11 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GO_IM_DIR="$ROOT_DIR/go-im"
 WEB_DIR="$ROOT_DIR/easy-im-web"
-LOG_DIR="$ROOT_DIR/logs"
-PID_DIR="$ROOT_DIR/pids"
+RUN_DIR="/opt/easy-im-run"
+LOG_DIR="$RUN_DIR/logs"
+PID_DIR="$RUN_DIR/pids"
 
-# 运行时输出目录：日志与 pid 文件
+# 运行时输出目录：日志与 pid 文件，统一放到仓库外
 mkdir -p "$LOG_DIR" "$PID_DIR"
 
 # 读取 VM_IP，供启动完成后打印宿主机访问地址
