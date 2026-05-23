@@ -33,6 +33,7 @@ cover.out
 !.env.*.example
 
 # Editor directories and files
+easy-im-web/.vscode/*
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -42,6 +43,7 @@ cover.out
 *.njsproj
 *.sln
 *.sw?
+docs/*
 
 # OS / misc
 Thumbs.db
