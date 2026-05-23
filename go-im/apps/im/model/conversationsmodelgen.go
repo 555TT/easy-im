@@ -31,7 +31,7 @@ func newDefaultConversationsModel(conn *mon.Model) *defaultConversationsModel {
 }
 
 func (m *defaultConversationsModel) Insert(ctx context.Context, data *Conversations) error {
-	if !data.ID.IsZero() {
+	if data.ID.IsZero() {
 		data.ID = primitive.NewObjectID()
 		data.CreateAt = time.Now()
 		data.UpdateAt = time.Now()
@@ -42,9 +42,14 @@ func (m *defaultConversationsModel) Insert(ctx context.Context, data *Conversati
 }
 
 func (m *defaultConversationsModel) FindOne(ctx context.Context, id string) (*Conversations, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, ErrInvalidObjectId
+	}
+
 	var data Conversations
 
-	err := m.conn.FindOne(ctx, &data, bson.M{"conversationId": id})
+	err = m.conn.FindOne(ctx, &data, bson.M{"_id": oid})
 	switch err {
 	case nil:
 		return &data, nil
