@@ -7,7 +7,8 @@ GO_IM_DIR="$ROOT_DIR/go-im"
 RUN_DIR="/opt/easy-im-run"
 PID_DIR="$RUN_DIR/pids"
 
-# 按 pid 文件停止单个服务；如果进程已不存在则清理残留 pid 文件
+# 按 pid 文件停止单个服务，pid 文件中实际保存的是进程组 ID (PGID)
+# 通过 kill -- -PGID 一次性结束 bash 包装、go run 以及真正的服务二进制
 stop_service() {
   local name="$1"
   local pid_file="$PID_DIR/${name}.pid"
@@ -20,11 +21,33 @@ stop_service() {
   local pid
   pid="$(cat "$pid_file")"
 
-  if kill -0 "$pid" >/dev/null 2>&1; then
-    echo "Stopping $name (pid: $pid) ..."
-    kill "$pid"
+  if [ -z "$pid" ]; then
+    echo "$name pid file empty, cleaning"
+    rm -f "$pid_file"
+    return
+  fi
+
+  if kill -0 "-$pid" >/dev/null 2>&1; then
+    echo "Stopping $name (pgid: $pid) ..."
+    kill -TERM "-$pid" 2>/dev/null || true
+
+    # 最多等待 5 秒让进程优雅退出
+    local i
+    for i in 1 2 3 4 5; do
+      if kill -0 "-$pid" >/dev/null 2>&1; then
+        sleep 1
+      else
+        break
+      fi
+    done
+
+    # 仍未退出则强制结束整个进程组
+    if kill -0 "-$pid" >/dev/null 2>&1; then
+      echo "$name still alive, sending SIGKILL"
+      kill -KILL "-$pid" 2>/dev/null || true
+    fi
   else
-    echo "$name process $pid not running, cleaning pid file"
+    echo "$name process group $pid not running, cleaning pid file"
   fi
 
   rm -f "$pid_file"

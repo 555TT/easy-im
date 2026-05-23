@@ -18,6 +18,8 @@ mkdir -p "$LOG_DIR" "$PID_DIR"
 source "$GO_IM_DIR/infra.host.env"
 
 # 后台启动单个服务，并记录日志与 pid
+# 使用 setsid 让子进程成为新的会话/进程组组长，pid 文件中保存的是进程组 ID
+# 这样 stop.sh 可以按整个进程组退出，避免 go run 与真正的服务二进制成为孤儿
 start_service() {
   local name="$1"
   local command="$2"
@@ -25,10 +27,10 @@ start_service() {
   local pid_file="$PID_DIR/${name}.pid"
 
   echo "Starting $name ..."
-  nohup bash -lc "$command" >"$log_file" 2>&1 &
+  setsid bash -lc "$command" >"$log_file" 2>&1 </dev/null &
   local pid=$!
   echo "$pid" >"$pid_file"
-  echo "$name started, log: $log_file, pid: $pid"
+  echo "$name started, log: $log_file, pid(pgid): $pid"
 }
 
 # 1. 先启动基础设施容器，确保 etcd/mysql/redis/mongo/kafka 等依赖可用
