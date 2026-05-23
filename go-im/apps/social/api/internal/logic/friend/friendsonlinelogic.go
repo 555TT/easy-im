@@ -34,8 +34,11 @@ func (l *FriendsOnlineLogic) FriendsOnline(req *types.FriendsOnlineReq) (resp *t
 	friendList, err := l.svcCtx.Social.FriendList(l.ctx, &social.FriendListReq{
 		UserId: uid,
 	})
-	if err != nil || len(friendList.List) == 0 {
-		return &types.FriendsOnlineResp{}, err
+	if err != nil {
+		return nil, err
+	}
+	if len(friendList.List) == 0 {
+		return &types.FriendsOnlineResp{OnlineList: map[string]bool{}}, nil
 	}
 
 	// 在缓存中查询在线用户

@@ -58,15 +58,19 @@ func (l *FriendListLogic) FriendList(req *types.FriendListReq) (resp *types.Frie
 		userRecords[users.Users[i].Id] = users.Users[i]
 	}
 
-	respList := make([]*types.Friends, len(friends.List))
-	for index, f := range friends.List {
-		respList[index] = &types.Friends{
+	respList := make([]*types.Friends, 0, len(friends.List))
+	for _, f := range friends.List {
+		ue, ok := userRecords[f.FriendUid]
+		if !ok {
+			continue
+		}
+		respList = append(respList, &types.Friends{
 			Id:        f.Id,
 			FriendUid: f.FriendUid,
 			Remark:    f.Remark,
-			Avatar:    userRecords[f.FriendUid].Avatar,
-			Nickname:  userRecords[f.FriendUid].Nickname,
-		}
+			Avatar:    ue.Avatar,
+			Nickname:  ue.Nickname,
+		})
 	}
-	return &types.FriendListResp{List: respList}, err
+	return &types.FriendListResp{List: respList}, nil
 }
