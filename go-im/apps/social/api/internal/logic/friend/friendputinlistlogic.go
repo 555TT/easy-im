@@ -2,6 +2,7 @@ package friend
 
 import (
 	"context"
+
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
 	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
 
@@ -27,7 +28,6 @@ func NewFriendPutInListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 }
 
 func (l *FriendPutInListLogic) FriendPutInList(req *types.FriendPutInListReq) (resp *types.FriendPutInListResp, err error) {
-	// todo: add your logic here and delete this line
 	uid := ctxdata.GetUId(l.ctx)
 
 	friendsReqList, err := l.svcCtx.Social.FriendPutInList(l.ctx, &social.FriendPutInListReq{

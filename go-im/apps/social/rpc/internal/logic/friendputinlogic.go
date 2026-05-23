@@ -57,8 +57,8 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 	logx.Infof("问题排查2，newID:%s, in.UserId:%s, in.ReqUid:%s, ReqTime:%v, HandledAt:%v", newID, in.UserId, in.ReqUid, time.UnixMilli(in.ReqTime), time.Now())
 	err = l.svcCtx.CSvc.DB.Debug().Create(&models.FriendRequest{
 		ID:           newID,
-		UserID:       in.UserId,
-		ReqUID:       in.ReqUid,
+		UserID:       in.ReqUid,
+		ReqUID:       in.UserId,
 		ReqMsg:       in.ReqMsg,
 		ReqTime:      time.UnixMilli(in.ReqTime),
 		HandleResult: status.PendingHandlerResult,
