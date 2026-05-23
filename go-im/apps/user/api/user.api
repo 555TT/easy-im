@@ -37,5 +37,9 @@ service user {
 	@doc "更新用户资料"
 	@handler updateProfile
 	put /profile (UpdateProfileReq) returns (UpdateProfileResp)
+
+	@doc "修改密码"
+	@handler updatePassword
+	put /password (UpdatePasswordReq) returns (UpdatePasswordResp)
 }
 

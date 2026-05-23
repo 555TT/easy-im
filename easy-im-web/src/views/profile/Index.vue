@@ -28,9 +28,6 @@ const form = reactive({
   sex: 0,
   email: '',
   avatar: '',
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: '',
 })
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -78,39 +75,6 @@ const rules: FormRules<typeof form> = {
       trigger: 'blur',
     },
   ],
-  oldPassword: [
-    {
-      validator: (_rule, value: string, callback) => {
-        if (!form.newPassword && !value) return callback()
-        if (!value) return callback(new Error('请输入当前密码'))
-        callback()
-      },
-      trigger: 'blur',
-    },
-  ],
-  newPassword: [
-    {
-      validator: (_rule, value: string, callback) => {
-        if (!form.oldPassword && !value) return callback()
-        if (!value) return callback(new Error('请输入新密码'))
-        if (value.trim().length < 6) return callback(new Error('新密码至少 6 位'))
-        if (value === form.oldPassword) return callback(new Error('新密码不能与旧密码相同'))
-        callback()
-      },
-      trigger: 'blur',
-    },
-  ],
-  confirmPassword: [
-    {
-      validator: (_rule, value: string, callback) => {
-        if (!form.newPassword && !value) return callback()
-        if (!value) return callback(new Error('请再次输入新密码'))
-        if (value !== form.newPassword) return callback(new Error('两次输入的新密码不一致'))
-        callback()
-      },
-      trigger: 'blur',
-    },
-  ],
 }
 
 const displayName = computed(() => info.value?.nickname || auth.userId)
@@ -124,9 +88,6 @@ function fillForm(user: UserInfoDTO): void {
   form.sex = user.sex
   form.email = user.email
   form.avatar = user.avatar
-  form.oldPassword = ''
-  form.newPassword = ''
-  form.confirmPassword = ''
 }
 
 async function loadProfile(): Promise<void> {
@@ -169,8 +130,6 @@ async function submit(): Promise<void> {
       sex: form.sex,
       email: form.email.trim(),
       avatar: form.avatar.trim(),
-      old_password: form.oldPassword,
-      new_password: form.newPassword,
     })
     if (resp.success) {
       await loadProfile()
@@ -237,15 +196,6 @@ async function submit(): Promise<void> {
           </el-form-item>
           <el-form-item label="头像地址" prop="avatar">
             <el-input v-model="form.avatar" placeholder="选填，填写可访问的图片 URL" />
-          </el-form-item>
-          <el-form-item label="当前密码" prop="oldPassword">
-            <el-input v-model="form.oldPassword" type="password" show-password placeholder="如需改密请填写当前密码" />
-          </el-form-item>
-          <el-form-item label="新密码" prop="newPassword">
-            <el-input v-model="form.newPassword" type="password" show-password placeholder="不少于 6 位；不修改可留空" />
-          </el-form-item>
-          <el-form-item label="确认新密码" prop="confirmPassword">
-            <el-input v-model="form.confirmPassword" type="password" show-password placeholder="请再次输入新密码" />
           </el-form-item>
         </el-form>
       </div>

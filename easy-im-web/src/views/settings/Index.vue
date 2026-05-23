@@ -1,7 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { ElMessage, ElRadio, ElRadioGroup } from 'element-plus'
+import { computed, ref, reactive } from 'vue'
+import {
+  ElButton,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElMessage,
+  ElRadio,
+  ElRadioGroup,
+  type FormRules,
+} from 'element-plus'
 import { applyStoredTheme, setStoredTheme, type ThemeMode } from '@/utils/theme'
+import * as userApi from '@/api/user'
+import { ApiError } from '@/api/http'
 
 const theme = ref<ThemeMode>(applyStoredTheme())
 
@@ -12,6 +23,60 @@ function changeTheme(value: string | number | boolean | undefined): void {
   theme.value = value
   setStoredTheme(value)
   ElMessage.success(`已切换为${value === 'dark' ? '深色' : '浅色'}主题`)
+}
+
+// Password change
+const passwordFormRef = ref<InstanceType<typeof ElForm>>()
+const passwordSaving = ref(false)
+const passwordForm = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+
+const passwordRules: FormRules<typeof passwordForm> = {
+  oldPassword: [
+    { required: true, message: '请输入当前密码', trigger: 'blur' },
+  ],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { min: 6, message: '新密码至少 6 位', trigger: 'blur' },
+  ],
+  confirmPassword: [
+    { required: true, message: '请再次输入新密码', trigger: 'blur' },
+    {
+      validator: (_rule, value: string, callback) => {
+        if (value !== passwordForm.newPassword) callback(new Error('两次输入的新密码不一致'))
+        else callback()
+      },
+      trigger: 'blur',
+    },
+  ],
+}
+
+async function submitPassword(): Promise<void> {
+  const valid = await passwordFormRef.value?.validate().catch(() => false)
+  if (!valid) return
+
+  passwordSaving.value = true
+  try {
+    const resp = await userApi.updatePassword({
+      old_password: passwordForm.oldPassword,
+      new_password: passwordForm.newPassword,
+    })
+    if (resp.success) {
+      ElMessage.success('密码修改成功')
+      passwordForm.oldPassword = ''
+      passwordForm.newPassword = ''
+      passwordForm.confirmPassword = ''
+      passwordFormRef.value?.clearValidate()
+    }
+  } catch (err) {
+    const msg = err instanceof ApiError ? err.message : '修改失败'
+    ElMessage.error(msg)
+  } finally {
+    passwordSaving.value = false
+  }
 }
 </script>
 
@@ -44,19 +109,26 @@ function changeTheme(value: string | number | boolean | undefined): void {
         </el-radio-group>
       </div>
 
-      <div class="panel preview-panel">
-        <div class="title">预览</div>
-        <div class="preview-shell">
-          <div class="preview-rail"></div>
-          <div class="preview-main">
-            <div class="preview-toolbar"></div>
-            <div class="preview-card">
-              <div class="preview-line short"></div>
-              <div class="preview-line"></div>
-              <div class="preview-line"></div>
-            </div>
-          </div>
-        </div>
+      <div class="panel">
+        <div class="title">修改密码</div>
+        <el-form
+          ref="passwordFormRef"
+          :model="passwordForm"
+          :rules="passwordRules"
+          label-position="top"
+          class="password-form"
+        >
+          <el-form-item label="当前密码" prop="oldPassword">
+            <el-input v-model="passwordForm.oldPassword" type="password" show-password placeholder="请输入当前密码" />
+          </el-form-item>
+          <el-form-item label="新密码" prop="newPassword">
+            <el-input v-model="passwordForm.newPassword" type="password" show-password placeholder="不少于 6 位" />
+          </el-form-item>
+          <el-form-item label="确认新密码" prop="confirmPassword">
+            <el-input v-model="passwordForm.confirmPassword" type="password" show-password placeholder="请再次输入新密码" />
+          </el-form-item>
+          <el-button type="primary" :loading="passwordSaving" @click="submitPassword">修改密码</el-button>
+        </el-form>
       </div>
     </div>
   </section>
@@ -138,47 +210,9 @@ function changeTheme(value: string | number | boolean | undefined): void {
   color: var(--text-secondary);
   font-size: 13px;
 }
-.preview-panel .title {
-  margin-bottom: 16px;
-}
-.preview-shell {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  min-height: 220px;
-  border: 1px solid var(--divider);
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--content-bg);
-}
-.preview-rail {
-  background: var(--rail-bg);
-}
-.preview-main {
-  padding: 16px;
-  background: var(--side-bg);
-}
-.preview-toolbar {
-  height: 18px;
-  width: 140px;
-  border-radius: 999px;
-  background: var(--side-active);
-}
-.preview-card {
+.password-form {
+  max-width: 400px;
   margin-top: 16px;
-  padding: 20px;
-  border-radius: 14px;
-  background: var(--surface-bg);
-  box-shadow: var(--shadow-pop);
-}
-.preview-line {
-  height: 12px;
-  border-radius: 999px;
-  background: var(--divider);
-  margin-top: 12px;
-}
-.preview-line.short {
-  width: 40%;
-  margin-top: 0;
 }
 @media (max-width: 768px) {
   .body {

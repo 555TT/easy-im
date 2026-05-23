@@ -32,10 +32,15 @@ export interface UpdateProfileReq {
   sex: number
   email: string
   avatar: string
+}
+export interface UpdateProfileResp {
+  success: boolean
+}
+export interface UpdatePasswordReq {
   old_password: string
   new_password: string
 }
-export interface UpdateProfileResp {
+export interface UpdatePasswordResp {
   success: boolean
 }
 

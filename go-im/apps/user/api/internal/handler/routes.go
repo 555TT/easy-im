@@ -34,6 +34,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 修改密码
+				Method:  http.MethodPut,
+				Path:    "/password",
+				Handler: user.UpdatePasswordHandler(serverCtx),
+			},
+			{
 				// 更新用户资料
 				Method:  http.MethodPut,
 				Path:    "/profile",

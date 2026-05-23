@@ -12,12 +12,10 @@ import (
 
 func TestNormalizeUpdateUserProfile_TrimmedValues(t *testing.T) {
 	normalized, err := normalizeUpdateUserProfile(&user.UpdateUserProfileReq{
-		Nickname:    "  valid-name  ",
-		Sex:         2,
-		Email:       "  valid@example.com  ",
-		Avatar:      "  https://example.com/avatar.png  ",
-		OldPassword: "  oldpass  ",
-		NewPassword: "  newpass123  ",
+		Nickname: "  valid-name  ",
+		Sex:      2,
+		Email:    "  valid@example.com  ",
+		Avatar:   "  https://example.com/avatar.png  ",
 	})
 	if err != nil {
 		t.Fatalf("normalizeUpdateUserProfile() error = %v", err)
@@ -33,12 +31,6 @@ func TestNormalizeUpdateUserProfile_TrimmedValues(t *testing.T) {
 	}
 	if normalized.avatar != "https://example.com/avatar.png" {
 		t.Fatalf("normalizeUpdateUserProfile() avatar = %q, want %q", normalized.avatar, "https://example.com/avatar.png")
-	}
-	if normalized.oldPassword != "oldpass" {
-		t.Fatalf("normalizeUpdateUserProfile() oldPassword = %q, want %q", normalized.oldPassword, "oldpass")
-	}
-	if normalized.newPassword != "newpass123" {
-		t.Fatalf("normalizeUpdateUserProfile() newPassword = %q, want %q", normalized.newPassword, "newpass123")
 	}
 }
 
@@ -69,7 +61,7 @@ func TestNormalizeUpdateUserProfile_RejectsInvalidEmail(t *testing.T) {
 	assertCodeError(t, err, xerr.InvalidEmail)
 }
 
-func TestNormalizeUpdateUserProfile_AllowsProfileOnlyUpdateWithoutPasswords(t *testing.T) {
+func TestNormalizeUpdateUserProfile_AllowsProfileOnlyUpdate(t *testing.T) {
 	normalized, err := normalizeUpdateUserProfile(&user.UpdateUserProfileReq{
 		Nickname: "valid-name",
 		Sex:      1,
@@ -79,54 +71,9 @@ func TestNormalizeUpdateUserProfile_AllowsProfileOnlyUpdateWithoutPasswords(t *t
 	if err != nil {
 		t.Fatalf("normalizeUpdateUserProfile() error = %v", err)
 	}
-	if normalized.oldPassword != "" {
-		t.Fatalf("normalizeUpdateUserProfile() oldPassword = %q, want empty", normalized.oldPassword)
+	if normalized.nickname != "valid-name" {
+		t.Fatalf("normalizeUpdateUserProfile() nickname = %q, want %q", normalized.nickname, "valid-name")
 	}
-	if normalized.newPassword != "" {
-		t.Fatalf("normalizeUpdateUserProfile() newPassword = %q, want empty", normalized.newPassword)
-	}
-}
-
-func TestNormalizeUpdateUserProfile_RejectsMissingOldPassword(t *testing.T) {
-	_, err := normalizeUpdateUserProfile(&user.UpdateUserProfileReq{
-		Nickname:    "valid-name",
-		Sex:         1,
-		Email:       "valid@example.com",
-		NewPassword: "newpass123",
-	})
-	assertCodeError(t, err, xerr.PasswordRequired)
-}
-
-func TestNormalizeUpdateUserProfile_RejectsMissingNewPassword(t *testing.T) {
-	_, err := normalizeUpdateUserProfile(&user.UpdateUserProfileReq{
-		Nickname:    "valid-name",
-		Sex:         1,
-		Email:       "valid@example.com",
-		OldPassword: "oldpass123",
-	})
-	assertCodeError(t, err, xerr.PasswordRequired)
-}
-
-func TestNormalizeUpdateUserProfile_RejectsUnchangedPassword(t *testing.T) {
-	_, err := normalizeUpdateUserProfile(&user.UpdateUserProfileReq{
-		Nickname:    "valid-name",
-		Sex:         1,
-		Email:       "valid@example.com",
-		OldPassword: "samepass",
-		NewPassword: "samepass",
-	})
-	assertCodeError(t, err, xerr.PasswordUnchanged)
-}
-
-func TestNormalizeUpdateUserProfile_RejectsShortNewPassword(t *testing.T) {
-	_, err := normalizeUpdateUserProfile(&user.UpdateUserProfileReq{
-		Nickname:    "valid-name",
-		Sex:         1,
-		Email:       "valid@example.com",
-		OldPassword: "oldpass",
-		NewPassword: "12345",
-	})
-	assertCodeError(t, err, xerr.PasswordTooShort)
 }
 
 func TestValidateAndHashNewPassword_ReturnsErrorForWrongOldPassword(t *testing.T) {

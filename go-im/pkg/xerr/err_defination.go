@@ -13,6 +13,8 @@ var (
 	PasswordRequired       = New(ServerCommonError, "old_password and new_password must be provided together")
 	PasswordUnchanged      = New(ServerCommonError, "new password must be different from old password")
 	PasswordTooShort       = New(ServerCommonError, "new password must be at least 6 characters")
+	EmptyOldPassword       = New(ServerCommonError, "请输入当前密码")
+	EmptyNewPassword       = New(ServerCommonError, "请输入新密码")
 )
 
 // Friend Err

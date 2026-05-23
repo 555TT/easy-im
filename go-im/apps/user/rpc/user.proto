@@ -69,11 +69,19 @@ message UpdateUserProfileReq{
   int32 sex = 3;
   string email = 4;
   string avatar = 5;
-  string oldPassword = 6;
-  string newPassword = 7;
 }
 
 message UpdateUserProfileResp{
+  bool success = 1;
+}
+
+message UpdateUserPasswordReq{
+  string userId = 1;
+  string oldPassword = 2;
+  string newPassword = 3;
+}
+
+message UpdateUserPasswordResp{
   bool success = 1;
 }
 
@@ -84,4 +92,5 @@ service User{
   rpc GetUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
   rpc FindUser(FindUserReq) returns(FindUserResp);
   rpc UpdateUserProfile(UpdateUserProfileReq) returns(UpdateUserProfileResp);
+  rpc UpdateUserPassword(UpdateUserPasswordReq) returns(UpdateUserPasswordResp);
 }

@@ -26,13 +26,20 @@ type RegisterResp struct {
 	Expire int64  `json:"expire"`
 }
 
-type UpdateProfileReq struct {
-	Nickname    string `json:"nickname"`
-	Sex         byte   `json:"sex"`
-	Email       string `json:"email"`
-	Avatar      string `json:"avatar"`
+type UpdatePasswordReq struct {
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
+}
+
+type UpdatePasswordResp struct {
+	Success bool `json:"success"`
+}
+
+type UpdateProfileReq struct {
+	Nickname string `json:"nickname"`
+	Sex      byte   `json:"sex"`
+	Email    string `json:"email"`
+	Avatar   string `json:"avatar"`
 }
 
 type UpdateProfileResp struct {

@@ -5,6 +5,8 @@ import type {
   RegisterReq,
   UpdateProfileReq,
   UpdateProfileResp,
+  UpdatePasswordReq,
+  UpdatePasswordResp,
   UserInfoResp,
 } from '@/types/api'
 
@@ -22,4 +24,8 @@ export function getUserInfo(): Promise<UserInfoResp> {
 
 export function updateProfile(body: UpdateProfileReq): Promise<UpdateProfileResp> {
   return userHttp.put('/profile', body)
+}
+
+export function updatePassword(body: UpdatePasswordReq): Promise<UpdatePasswordResp> {
+  return userHttp.put('/password', body)
 }

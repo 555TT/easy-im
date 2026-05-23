@@ -113,7 +113,7 @@ func (s *CacheService) GetUserByName(user *models.User, name string) error {
 	return nil
 }
 
-func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, email, avatar string, passwordHash *string) error {
+func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, email, avatar string) error {
 	var u models.User
 	if err := s.DB.Where("id = ?", userID).First(&u).Error; err != nil {
 		return err
@@ -127,9 +127,6 @@ func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, emai
 		"email":    email,
 		"avatar":   avatar,
 	}
-	if passwordHash != nil {
-		updates["password"] = *passwordHash
-	}
 	if err := s.DB.Model(&u).Updates(updates).Error; err != nil {
 		return err
 	}
@@ -138,9 +135,6 @@ func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, emai
 	u.Sex = updatedSex
 	u.Email = email
 	u.Avatar = avatar
-	if passwordHash != nil {
-		u.Password = *passwordHash
-	}
 
 	ctx := context.Background()
 	cacheKeys := []string{"user_id:" + u.ID, "user_phone:" + u.Phone}
@@ -154,6 +148,20 @@ func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, emai
 	for _, cacheKey := range cacheKeys {
 		if err := s.RDB.Del(ctx, cacheKey).Err(); err != nil {
 			logx.Errorf("failed to invalidate user cache after profile update, userID=%s cacheKey=%s err=%v", userID, cacheKey, err)
+		}
+	}
+	return nil
+}
+
+func (s *CacheService) UpdateUserPassword(userID, passwordHash string) error {
+	ctx := context.Background()
+	if err := s.DB.Model(&models.User{}).Where("id = ?", userID).Update("password", passwordHash).Error; err != nil {
+		return err
+	}
+	cacheKeys := []string{"user_id:" + userID, "user_phone:" + userID}
+	for _, cacheKey := range cacheKeys {
+		if err := s.RDB.Del(ctx, cacheKey).Err(); err != nil {
+			logx.Errorf("failed to invalidate user cache after password update, userID=%s cacheKey=%s err=%v", userID, cacheKey, err)
 		}
 	}
 	return nil

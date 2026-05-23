@@ -28,13 +28,11 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *types.UpdateProfileResp, err error) {
 	uid := ctxdata.GetUId(l.ctx)
 	_, err = l.svcCtx.User.UpdateUserProfile(l.ctx, &user.UpdateUserProfileReq{
-		UserId:      uid,
-		Nickname:    req.Nickname,
-		Sex:         int32(req.Sex),
-		Email:       req.Email,
-		Avatar:      req.Avatar,
-		OldPassword: req.OldPassword,
-		NewPassword: req.NewPassword,
+		UserId:   uid,
+		Nickname: req.Nickname,
+		Sex:      int32(req.Sex),
+		Email:    req.Email,
+		Avatar:   req.Avatar,
 	})
 	if err != nil {
 		return nil, err
