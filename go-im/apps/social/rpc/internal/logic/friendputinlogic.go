@@ -2,15 +2,15 @@ package logic
 
 import (
 	"context"
+	"time"
+
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/models"
 	"github.com/peninsula12/easy-im/go-im/pkg/status"
 	"github.com/peninsula12/easy-im/go-im/pkg/suid"
 	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
-	"fmt"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"time"
 
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
 
@@ -32,8 +32,6 @@ func NewFriendPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 }
 
 func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.FriendPutInResp, error) {
-	// todo: add your logic here and delete this line
-	fmt.Println("---------------------------------------------------------")
 	var friend models.Friend
 	// 1. 申请人是否与目标是好友关系 此操作不需要使用缓存
 	err := l.svcCtx.CSvc.DB.Where("user_id = ? and friend_uid = ?", in.UserId, in.ReqUid).First(&friend).Error
@@ -43,7 +41,7 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 	if err != gorm.ErrRecordNotFound {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend by user_id %v and friend_uid %v err %v", in.UserId, in.ReqUid, err)
 	}
-	fmt.Println("---------------------------------------------------------")
+	logx.Infof("问题排查2，friend:%+v", friend)
 	// 2. 是否已经有过申请，请申请尚未通过
 	var friendReq models.FriendRequest
 	err = l.svcCtx.CSvc.DB.Where("req_uid = ? and user_id = ? and handle_result != ?", in.ReqUid, in.UserId, status.PassHandlerResult).First(&friendReq).Error
@@ -53,6 +51,7 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 	if err != gorm.ErrRecordNotFound {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend request refused by req_uid %v and user_id %v err %v", in.ReqUid, in.UserId, err)
 	}
+	logx.Infof("问题排查2，friendReq:%+v", friendReq)
 	// 3. 创建申请记录
 	err = l.svcCtx.CSvc.DB.Debug().Create(&models.FriendRequest{
 		ID:           suid.GenerateID(),
@@ -66,5 +65,6 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "create friend request by user_id %v and req_uid %v err %v", in.UserId, in.ReqUid, err)
 	}
+	logx.Info("问题排查2，成功")
 	return &social.FriendPutInResp{}, nil
 }
