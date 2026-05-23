@@ -17,7 +17,7 @@ services:
       ETCD_INITIAL_CLUSTER_TOKEN: easy-im-etcd
       ALLOW_NONE_AUTHENTICATION: "yes"
     volumes:
-      - ./components/etcd/data:/etcd-data
+      - /opt/easy-im-data/etcd:/etcd-data
     command: >
       /usr/local/bin/etcd
       --data-dir=/etcd-data
@@ -29,7 +29,7 @@ services:
     ports:
       - "16379:6379"
     volumes:
-      - ./components/redis/data:/data
+      - /opt/easy-im-data/redis:/data
     environment:
       TZ: Asia/Shanghai
     command: redis-server --requirepass easy-chat --appendonly yes
@@ -41,7 +41,7 @@ services:
     ports:
       - "13306:3306"
     volumes:
-      - ./components/mysql/data:/var/lib/mysql
+      - /opt/easy-im-data/mysql:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     environment:
       MYSQL_ROOT_PASSWORD: easy-chat
@@ -56,7 +56,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: easy-chat
     volumes:
-      - ./components/mongo/data:/data/db
+      - /opt/easy-im-data/mongo:/data/db
       - /etc/localtime:/etc/localtime:ro
     restart: always
 
@@ -78,8 +78,8 @@ services:
     environment:
       ZOO_4LW_COMMANDS_WHITELIST: "*"
     volumes:
-      - ./components/zookeeper/data:/data
-      - ./components/zookeeper/datalog:/datalog
+      - /opt/easy-im-data/zookeeper/data:/data
+      - /opt/easy-im-data/zookeeper/datalog:/datalog
     restart: always
 
   kafka:
@@ -99,5 +99,5 @@ services:
     depends_on:
       - zookeeper
     volumes:
-      - ./components/kafka/data:/bitnami/kafka
+      - /opt/easy-im-data/kafka:/bitnami/kafka
     restart: always
