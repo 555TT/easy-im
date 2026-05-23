@@ -34,7 +34,7 @@ func (l *UpdateUserProfileLogic) UpdateUserProfile(in *user.UpdateUserProfileReq
 		return nil, err
 	}
 
-	if err := l.svcCtx.CSvc.UpdateUserProfile(in.UserId, normalized.nickname, normalized.sex, normalized.email, normalized.avatar); err != nil {
+	if err := l.svcCtx.CSvc.UpdateUserProfile(in.UserId, normalized.nickname, normalized.sex, normalized.email); err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "update user profile failed, userId=%s err=%v", in.UserId, err)
 	}
 
@@ -45,7 +45,6 @@ type normalizedUpdateUserProfile struct {
 	nickname string
 	sex      int8
 	email    string
-	avatar   string
 }
 
 func normalizeUpdateUserProfile(in *user.UpdateUserProfileReq) (*normalizedUpdateUserProfile, error) {
@@ -62,12 +61,9 @@ func normalizeUpdateUserProfile(in *user.UpdateUserProfileReq) (*normalizedUpdat
 		return nil, errors.WithStack(xerr.InvalidEmail)
 	}
 
-	avatar := strings.TrimSpace(in.Avatar)
-
 	return &normalizedUpdateUserProfile{
 		nickname: nickname,
 		sex:      int8(in.Sex),
 		email:    email,
-		avatar:   avatar,
 	}, nil
 }

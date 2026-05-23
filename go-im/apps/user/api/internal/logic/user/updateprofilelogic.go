@@ -32,7 +32,6 @@ func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *t
 		Nickname: req.Nickname,
 		Sex:      int32(req.Sex),
 		Email:    req.Email,
-		Avatar:   req.Avatar,
 	})
 	if err != nil {
 		return nil, err

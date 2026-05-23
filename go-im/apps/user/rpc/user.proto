@@ -68,7 +68,6 @@ message UpdateUserProfileReq{
   string nickname = 2;
   int32 sex = 3;
   string email = 4;
-  string avatar = 5;
 }
 
 message UpdateUserProfileResp{

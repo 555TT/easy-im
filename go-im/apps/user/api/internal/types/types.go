@@ -39,7 +39,6 @@ type UpdateProfileReq struct {
 	Nickname string `json:"nickname"`
 	Sex      byte   `json:"sex"`
 	Email    string `json:"email"`
-	Avatar   string `json:"avatar"`
 }
 
 type UpdateProfileResp struct {

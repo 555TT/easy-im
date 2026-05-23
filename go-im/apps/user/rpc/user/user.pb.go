@@ -641,7 +641,6 @@ type UpdateUserProfileReq struct {
 	Nickname      string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	Sex           int32                  `protobuf:"varint,3,opt,name=sex,proto3" json:"sex,omitempty"`
 	Email         string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
-	Avatar        string                 `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -700,13 +699,6 @@ func (x *UpdateUserProfileReq) GetSex() int32 {
 func (x *UpdateUserProfileReq) GetEmail() string {
 	if x != nil {
 		return x.Email
-	}
-	return ""
-}
-
-func (x *UpdateUserProfileReq) GetAvatar() string {
-	if x != nil {
-		return x.Avatar
 	}
 	return ""
 }
@@ -903,13 +895,12 @@ const file_user_proto_rawDesc = "" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x10\n" +
 	"\x03ids\x18\x03 \x03(\tR\x03ids\"6\n" +
 	"\fFindUserResp\x12&\n" +
-	"\x05users\x18\x01 \x03(\v2\x10.user.UserEntityR\x05users\"\x8a\x01\n" +
+	"\x05users\x18\x01 \x03(\v2\x10.user.UserEntityR\x05users\"r\n" +
 	"\x14UpdateUserProfileReq\x12\x16\n" +
 	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
 	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x10\n" +
 	"\x03sex\x18\x03 \x01(\x05R\x03sex\x12\x14\n" +
-	"\x05email\x18\x04 \x01(\tR\x05email\x12\x16\n" +
-	"\x06avatar\x18\x05 \x01(\tR\x06avatar\"1\n" +
+	"\x05email\x18\x04 \x01(\tR\x05email\"1\n" +
 	"\x15UpdateUserProfileResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"s\n" +
 	"\x15UpdateUserPasswordReq\x12\x16\n" +

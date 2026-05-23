@@ -31,7 +31,6 @@ export interface UpdateProfileReq {
   nickname: string
   sex: number
   email: string
-  avatar: string
 }
 export interface UpdateProfileResp {
   success: boolean

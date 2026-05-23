@@ -113,7 +113,7 @@ func (s *CacheService) GetUserByName(user *models.User, name string) error {
 	return nil
 }
 
-func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, email, avatar string) error {
+func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, email string) error {
 	var u models.User
 	if err := s.DB.Where("id = ?", userID).First(&u).Error; err != nil {
 		return err
@@ -125,7 +125,6 @@ func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, emai
 		"nickname": nickname,
 		"sex":      updatedSex,
 		"email":    email,
-		"avatar":   avatar,
 	}
 	if err := s.DB.Model(&u).Updates(updates).Error; err != nil {
 		return err
@@ -134,7 +133,6 @@ func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, emai
 	u.Nickname = nickname
 	u.Sex = updatedSex
 	u.Email = email
-	u.Avatar = avatar
 
 	ctx := context.Background()
 	cacheKeys := []string{"user_id:" + u.ID, "user_phone:" + u.Phone}

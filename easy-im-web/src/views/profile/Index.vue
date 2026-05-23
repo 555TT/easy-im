@@ -27,7 +27,6 @@ const form = reactive({
   nickname: '',
   sex: 0,
   email: '',
-  avatar: '',
 })
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -61,20 +60,6 @@ const rules: FormRules<typeof form> = {
       trigger: 'blur',
     },
   ],
-  avatar: [
-    {
-      validator: (_rule, value: string, callback) => {
-        if (!value) return callback()
-        try {
-          new URL(value)
-          callback()
-        } catch {
-          callback(new Error('头像请填写合法的 URL'))
-        }
-      },
-      trigger: 'blur',
-    },
-  ],
 }
 
 const displayName = computed(() => info.value?.nickname || auth.userId)
@@ -87,7 +72,6 @@ function fillForm(user: UserInfoDTO): void {
   form.nickname = user.nickname
   form.sex = user.sex
   form.email = user.email
-  form.avatar = user.avatar
 }
 
 async function loadProfile(): Promise<void> {
@@ -129,7 +113,6 @@ async function submit(): Promise<void> {
       nickname: form.nickname.trim(),
       sex: form.sex,
       email: form.email.trim(),
-      avatar: form.avatar.trim(),
     })
     if (resp.success) {
       await loadProfile()
@@ -152,7 +135,7 @@ async function submit(): Promise<void> {
     <div v-loading="loading" class="body">
       <div class="panel">
         <div class="profile-header">
-          <Avatar :src="editing ? form.avatar : info?.avatar" :name="displayName" :size="80" />
+          <Avatar :src="info?.avatar" :name="displayName" :size="80" />
           <div class="summary">
             <div class="name">{{ displayName }}</div>
             <div class="sub">{{ auth.userId }}</div>
@@ -173,7 +156,6 @@ async function submit(): Promise<void> {
             <li><span>昵称</span><span>{{ info?.nickname || '-' }}</span></li>
             <li><span>邮箱</span><span>{{ info?.email || '-' }}</span></li>
             <li><span>性别</span><span>{{ displaySex }}</span></li>
-            <li><span>头像地址</span><span class="text-cell">{{ info?.avatar || '-' }}</span></li>
           </ul>
         </template>
 
@@ -193,9 +175,6 @@ async function submit(): Promise<void> {
               <el-radio :value="1">男</el-radio>
               <el-radio :value="2">女</el-radio>
             </el-radio-group>
-          </el-form-item>
-          <el-form-item label="头像地址" prop="avatar">
-            <el-input v-model="form.avatar" placeholder="选填，填写可访问的图片 URL" />
           </el-form-item>
         </el-form>
       </div>
