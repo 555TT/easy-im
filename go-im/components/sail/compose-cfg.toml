@@ -9,13 +9,13 @@ refreshDuration = "168h"
 connMaxLifeTime = "3m"
 maxIdleConn = 30
 maxOpenConn = 60
-addr = "118.178.120.11:13306"
+addr = "192.168.200.129:13306"
 name = "sail"
 pass = "easy-chat"
 user = "root"
 
 [etcd]
-endpoints = ["118.178.120.11:3379"]
+endpoints = ["192.168.200.129:3379"]
 username = ""
 password = ""
 dialTimeout = "10s"

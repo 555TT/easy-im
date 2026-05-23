@@ -17,7 +17,7 @@ func Test_Jaeger(t *testing.T) {
 		},
 		Reporter: &jaegercfg.ReporterConfig{
 			LogSpans:          true,
-			CollectorEndpoint: fmt.Sprintf("http://%s/api/traces", "118.178.120.11:14268"),
+			CollectorEndpoint: fmt.Sprintf("http://%s/api/traces", "192.168.200.129:14268"),
 		},
 	}
 	Jaeger, err := cfg.InitGlobalTracer("client test", jaegercfg.Logger(jaeger.StdLogger))

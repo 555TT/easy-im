@@ -19,7 +19,7 @@ deployment:
         role: viewer
   etcd:
     host:
-      - http://118.178.120.11:3379          # multiple etcd address
+      - http://192.168.200.129:3379          # multiple etcd address
     prefix: "/apisix"               # apisix configurations prefix
     timeout: 30                     # 30 seconds
 

@@ -17,5 +17,5 @@ docker pull ${reso_addr}:${tag}
 docker run -d --name ${container_name} --network go-im_easy-chat  -p 10001:10001 ${reso_addr}:${tag}
 
 # 如果需要外部直接访问rpc，则使用以下命令进行容器启动
-#pod_ip="118.178.120.11"
+#pod_ip="192.168.200.129"
 #docker run -d ${reso_addr}:${tag} --name ${container_name}  -e POD_IP=${pod_ip} -p 10000:10000

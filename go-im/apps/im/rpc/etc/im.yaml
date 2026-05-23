@@ -4,14 +4,14 @@ Mode: test
 
 Etcd:
   Hosts:
-  - 118.178.120.11:3379
+  - 192.168.200.129:3379
   Key: im.rpc
 
 Mongo:
-  Url: "mongodb://root:easy-chat@118.178.120.11:47017"
+  Url: "mongodb://root:easy-chat@192.168.200.129:47017"
   Db: easy-chat
 
 Telemetry:
   Name: im.rpc
-  Endpoint: http://118.178.120.11:14268/api/traces
+  Endpoint: http://192.168.200.129:14268/api/traces
   Batcher: jaeger
