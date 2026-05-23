@@ -15,6 +15,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'contacts/requests', name: 'contact-requests', component: () => import('@/views/contacts/Index.vue') },
       { path: 'contacts/:friendId', name: 'contact-detail', component: () => import('@/views/contacts/Index.vue') },
       { path: 'settings', name: 'settings', component: () => import('@/views/settings/Index.vue') },
+      { path: 'profile', name: 'profile', component: () => import('@/views/profile/Index.vue') },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

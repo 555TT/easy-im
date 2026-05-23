@@ -33,5 +33,9 @@ service user {
 	@doc "获取用户信息"
 	@handler detail
 	get /user (UserInfoReq) returns (UserInfoResp)
+
+	@doc "更新用户资料"
+	@handler updateProfile
+	put /profile (UpdateProfileReq) returns (UpdateProfileResp)
 }
 

@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/user"
 	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
 
@@ -37,10 +36,13 @@ func (l *DetailLogic) Detail(req *types.UserInfoReq) (resp *types.UserInfoResp, 
 		return nil, err
 	}
 
-	var res types.User
-	err = copier.Copy(&res, userInfoResp.User)
-	if err != nil {
-		return nil, err
+	res := types.User{
+		Id:       userInfoResp.User.Id,
+		Mobile:   userInfoResp.User.Phone,
+		Nickname: userInfoResp.User.Nickname,
+		Sex:      byte(userInfoResp.User.Sex),
+		Avatar:   userInfoResp.User.Avatar,
+		Email:    userInfoResp.User.Email,
 	}
 	resp = &types.UserInfoResp{Info: res}
 	return

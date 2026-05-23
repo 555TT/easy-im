@@ -7,6 +7,12 @@ var (
 	IdNotFound             = New(ServerCommonError, "api id not found")
 	UserPwdErr             = New(ServerCommonError, "password is wrong")
 	ParamError             = New(RequestParamError, "params error")
+	InvalidEmail           = New(ServerCommonError, "邮箱格式不正确")
+	EmptyNickname          = New(ServerCommonError, "用户名不能为空")
+	InvalidSex             = New(ServerCommonError, "性别参数不合法")
+	PasswordRequired       = New(ServerCommonError, "old_password and new_password must be provided together")
+	PasswordUnchanged      = New(ServerCommonError, "new password must be different from old password")
+	PasswordTooShort       = New(ServerCommonError, "new password must be at least 6 characters")
 )
 
 // Friend Err

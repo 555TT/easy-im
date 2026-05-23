@@ -5,8 +5,8 @@ import { useAuthStore } from '@/stores/auth'
 import { useContactStore } from '@/stores/contact'
 import { wsClient } from '@/ws/client'
 import Avatar from '@/components/Avatar.vue'
-import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElBadge } from 'element-plus'
-import { ChatDotRound, User, Setting } from '@element-plus/icons-vue'
+import { ElBadge, ElTooltip } from 'element-plus'
+import { ChatDotRound, User, Setting, SwitchButton } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +24,8 @@ const activeKey = computed(() => {
   if (route.path.startsWith('/settings')) return 'settings'
   return 'chat'
 })
+
+const isProfileRoute = computed(() => route.path.startsWith('/profile'))
 
 function go(path: string): void {
   router.push(path)
@@ -57,14 +59,19 @@ function logout(): void {
       </button>
     </div>
     <div class="rail-bottom">
-      <el-dropdown trigger="click" @command="logout">
+      <button
+        class="profile-entry"
+        :class="{ active: isProfileRoute }"
+        title="个人信息"
+        @click="go('/profile')"
+      >
         <Avatar :name="auth.userId" :size="36" />
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      </button>
+      <el-tooltip content="退出登录" placement="right">
+        <button class="logout-btn" title="退出登录" @click="logout">
+          <SwitchButton class="logout-icon" />
+        </button>
+      </el-tooltip>
     </div>
   </aside>
 </template>
@@ -112,7 +119,44 @@ function logout(): void {
 }
 .rail-bottom {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.profile-entry,
+.logout-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+.profile-entry {
+  border-radius: 999px;
+  outline: 2px solid transparent;
+  transition: outline-color 120ms, transform 120ms;
+}
+.profile-entry:hover {
+  transform: translateY(-1px);
+}
+.profile-entry.active {
+  outline-color: var(--rail-active);
+}
+.logout-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.72);
+  transition: background 120ms, color 120ms;
+}
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.logout-icon {
+  width: 16px;
+  height: 16px;
 }
 </style>

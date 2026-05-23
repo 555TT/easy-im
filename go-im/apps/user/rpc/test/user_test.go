@@ -2,16 +2,20 @@ package logic
 
 import (
 	"context"
+	stderrors "errors"
+	"flag"
+	"testing"
+
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/config"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/logic"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/user"
-	"flag"
+	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
 	"github.com/zeromicro/go-zero/core/conf"
-	"testing"
+	zerrors "github.com/zeromicro/x/errors"
 )
 
-var configFile = flag.String("f", "../etc/dev/user.yaml", "the config file")
+var configFile = flag.String("f", "../etc/user.yaml", "the config file")
 
 var svcCtx *svc.ServiceContext
 
@@ -142,7 +146,6 @@ func TestGetUserInfoLogic_GetUserInfo(t *testing.T) {
 		want    bool
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "1", args: args{in: &user.GetUserInfoReq{
 				User: "1838501776039350272",
@@ -161,6 +164,139 @@ func TestGetUserInfoLogic_GetUserInfo(t *testing.T) {
 				t.Logf("GetUserInfo() got = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestUpdateUserProfile_RejectsEmptyNickname(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:   "1838501776039350272",
+			Nickname: "   ",
+			Sex:      1,
+			Email:    "valid@example.com",
+		})
+	assertCodeError(t, err, xerr.EmptyNickname)
+}
+
+func TestUpdateUserProfile_RejectsInvalidSex(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:   "1838501776039350272",
+			Nickname: "valid-name",
+			Sex:      3,
+			Email:    "valid@example.com",
+		})
+	assertCodeError(t, err, xerr.InvalidSex)
+}
+
+func TestUpdateUserProfile_RejectsInvalidEmail(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:   "1838501776039350272",
+			Nickname: "valid-name",
+			Sex:      1,
+			Email:    "not-an-email",
+		})
+	assertCodeError(t, err, xerr.InvalidEmail)
+}
+
+func TestUpdateUserProfile_AllowsProfileOnlyUpdateWithoutPasswords(t *testing.T) {
+	resp, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:   "1838501776039350272",
+			Nickname: "valid-name",
+			Sex:      1,
+			Email:    "valid@example.com",
+		})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile() error = %v", err)
+	}
+	if resp == nil || !resp.Success {
+		t.Fatalf("UpdateUserProfile() resp = %#v, want success", resp)
+	}
+}
+
+func TestUpdateUserProfile_RejectsMissingOldPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:      "1838501776039350272",
+			Nickname:    "valid-name",
+			Sex:         1,
+			Email:       "valid@example.com",
+			NewPassword: "newpass123",
+		})
+	assertCodeError(t, err, xerr.PasswordRequired)
+}
+
+func TestUpdateUserProfile_RejectsMissingNewPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:      "1838501776039350272",
+			Nickname:    "valid-name",
+			Sex:         1,
+			Email:       "valid@example.com",
+			OldPassword: "oldpass123",
+		})
+	assertCodeError(t, err, xerr.PasswordRequired)
+}
+
+func TestUpdateUserProfile_RejectsUnchangedPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:      "1838501776039350272",
+			Nickname:    "valid-name",
+			Sex:         1,
+			Email:       "valid@example.com",
+			OldPassword: "samepass123",
+			NewPassword: "samepass123",
+		})
+	assertCodeError(t, err, xerr.PasswordUnchanged)
+}
+
+func TestUpdateUserProfile_RejectsShortNewPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:      "1838501776039350272",
+			Nickname:    "valid-name",
+			Sex:         1,
+			Email:       "valid@example.com",
+			OldPassword: "oldpass123",
+			NewPassword: "12345",
+		})
+	assertCodeError(t, err, xerr.PasswordTooShort)
+}
+
+func TestUpdateUserProfile_RejectsWrongOldPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
+		UpdateUserProfile(&user.UpdateUserProfileReq{
+			UserId:      "1838501776039350272",
+			Nickname:    "valid-name",
+			Sex:         1,
+			Email:       "valid@example.com",
+			OldPassword: "wrong-password",
+			NewPassword: "newpass123",
+		})
+	assertCodeError(t, err, xerr.UserPwdErr)
+}
+
+func assertCodeError(t *testing.T, err error, want error) {
+	t.Helper()
+	if err == nil {
+		t.Fatalf("expected error %v, got nil", want)
+	}
+
+	var codeErr *zerrors.CodeMsg
+	if !stderrors.As(err, &codeErr) {
+		t.Fatalf("expected code error, got %T: %v", err, err)
+	}
+
+	var wantCodeErr *zerrors.CodeMsg
+	if !stderrors.As(want, &wantCodeErr) {
+		t.Fatalf("expected code error for want, got %T: %v", want, want)
+	}
+
+	if codeErr.Code != wantCodeErr.Code {
+		t.Fatalf("error code = %d, want %d (err=%v)", codeErr.Code, wantCodeErr.Code, err)
 	}
 }
 

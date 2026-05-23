@@ -32,6 +32,7 @@ type User struct {
 	Nickname string `json:"nickname"`
 	Sex      byte   `json:"sex"`
 	Avatar   string `json:"avatar"`
+	Email    string `json:"email"`
 }
 
 type UserInfoReq struct {
@@ -40,4 +41,17 @@ type UserInfoReq struct {
 
 type UserInfoResp struct {
 	Info User `json:"user"`
+}
+
+type UpdateProfileReq struct {
+	Nickname    string `json:"nickname"`
+	Sex         byte   `json:"sex"`
+	Email       string `json:"email"`
+	Avatar      string `json:"avatar"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+type UpdateProfileResp struct {
+	Success bool `json:"success"`
 }

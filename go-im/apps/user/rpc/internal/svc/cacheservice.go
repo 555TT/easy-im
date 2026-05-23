@@ -8,6 +8,7 @@ import (
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/models"
 	"github.com/peninsula12/easy-im/go-im/pkg/utils"
 	"github.com/redis/go-redis/v9"
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 	"time"
 )
@@ -108,6 +109,52 @@ func (s *CacheService) GetUserByName(user *models.User, name string) error {
 	err = s.SetUserCache(user, cacheKey)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, email, avatar string, passwordHash *string) error {
+	var u models.User
+	if err := s.DB.Where("id = ?", userID).First(&u).Error; err != nil {
+		return err
+	}
+
+	oldNickname := u.Nickname
+	updatedSex := utils.ConvertToInt8(sex)
+	updates := map[string]interface{}{
+		"nickname": nickname,
+		"sex":      updatedSex,
+		"email":    email,
+		"avatar":   avatar,
+	}
+	if passwordHash != nil {
+		updates["password"] = *passwordHash
+	}
+	if err := s.DB.Model(&u).Updates(updates).Error; err != nil {
+		return err
+	}
+
+	u.Nickname = nickname
+	u.Sex = updatedSex
+	u.Email = email
+	u.Avatar = avatar
+	if passwordHash != nil {
+		u.Password = *passwordHash
+	}
+
+	ctx := context.Background()
+	cacheKeys := []string{"user_id:" + u.ID, "user_phone:" + u.Phone}
+	if oldNickname != "" {
+		cacheKeys = append(cacheKeys, "user_name:"+oldNickname)
+	}
+	if u.Nickname != "" && u.Nickname != oldNickname {
+		cacheKeys = append(cacheKeys, "user_name:"+u.Nickname)
+	}
+
+	for _, cacheKey := range cacheKeys {
+		if err := s.RDB.Del(ctx, cacheKey).Err(); err != nil {
+			logx.Errorf("failed to invalidate user cache after profile update, userID=%s cacheKey=%s err=%v", userID, cacheKey, err)
+		}
 	}
 	return nil
 }

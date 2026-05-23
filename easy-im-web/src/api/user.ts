@@ -3,6 +3,8 @@ import type {
   LoginReq,
   LoginResp,
   RegisterReq,
+  UpdateProfileReq,
+  UpdateProfileResp,
   UserInfoResp,
 } from '@/types/api'
 
@@ -16,4 +18,8 @@ export function register(body: RegisterReq): Promise<LoginResp> {
 
 export function getUserInfo(userId: string): Promise<UserInfoResp> {
   return userHttp.get('/user', { params: { user_id: userId } })
+}
+
+export function updateProfile(body: UpdateProfileReq): Promise<UpdateProfileResp> {
+  return userHttp.put('/profile', body)
 }

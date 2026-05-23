@@ -12,6 +12,7 @@ type User {
     Nickname string `json:"nickname"`
     Sex byte `json:"sex"`
     Avatar string `json:"avatar"`
+    Email string `json:"email"`
 }
 type (
     RegisterReq {
@@ -43,4 +44,18 @@ UserInfoReq{
 UserInfoResp{
     Info User `json:"user"`
 }
+)
+
+type (
+    UpdateProfileReq {
+        Nickname string `json:"nickname"`
+        Sex byte `json:"sex"`
+        Email string `json:"email"`
+        Avatar string `json:"avatar"`
+        OldPassword string `json:"old_password"`
+        NewPassword string `json:"new_password"`
+    }
+    UpdateProfileResp {
+        Success bool `json:"success"`
+    }
 )

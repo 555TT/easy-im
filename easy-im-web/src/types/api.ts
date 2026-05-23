@@ -22,9 +22,21 @@ export interface UserInfoDTO {
   nickname: string
   sex: number
   avatar: string
+  email: string
 }
 export interface UserInfoResp {
   user: UserInfoDTO
+}
+export interface UpdateProfileReq {
+  nickname: string
+  sex: number
+  email: string
+  avatar: string
+  old_password: string
+  new_password: string
+}
+export interface UpdateProfileResp {
+  success: boolean
 }
 
 // social-api

@@ -12,6 +12,7 @@ message UserEntity{
   string phone = 4; // 手机号码
   int32 status =5 ; // 是否锁住
   int32 sex = 6; // 性别
+  string email = 7; // 邮箱
 }
 // req与resp
 message Request{
@@ -62,10 +63,25 @@ message FindUserResp{
   repeated UserEntity users = 1;
 }
 
+message UpdateUserProfileReq{
+  string userId = 1;
+  string nickname = 2;
+  int32 sex = 3;
+  string email = 4;
+  string avatar = 5;
+  string oldPassword = 6;
+  string newPassword = 7;
+}
+
+message UpdateUserProfileResp{
+  bool success = 1;
+}
+
 service User{
   rpc Ping(Request) returns(Response);
   rpc Login(LoginReq) returns(LoginResp);
   rpc Register(RegisterReq) returns(RegisterResp);
   rpc GetUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
   rpc FindUser(FindUserReq) returns(FindUserResp);
+  rpc UpdateUserProfile(UpdateUserProfileReq) returns(UpdateUserProfileResp);
 }

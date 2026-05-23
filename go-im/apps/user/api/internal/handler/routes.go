@@ -39,6 +39,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/user",
 				Handler: user.DetailHandler(serverCtx),
 			},
+			{
+				// 更新用户资料
+				Method:  http.MethodPut,
+				Path:    "/profile",
+				Handler: user.UpdateProfileHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/v1/user"),

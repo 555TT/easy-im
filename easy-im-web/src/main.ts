@@ -12,6 +12,9 @@ import { router } from './router'
 import { useAuthStore } from './stores/auth'
 import { configureHttp } from './api/http'
 import { wsClient } from './ws/client'
+import { applyStoredTheme } from './utils/theme'
+
+applyStoredTheme()
 
 const app = createApp(App)
 const pinia = createPinia()

@@ -47,3 +47,8 @@ func (s *UserServer) FindUser(ctx context.Context, in *user.FindUserReq) (*user.
 	l := logic.NewFindUserLogic(ctx, s.svcCtx)
 	return l.FindUser(in)
 }
+
+func (s *UserServer) UpdateUserProfile(ctx context.Context, in *user.UpdateUserProfileReq) (*user.UpdateUserProfileResp, error) {
+	l := logic.NewUpdateUserProfileLogic(ctx, s.svcCtx)
+	return l.UpdateUserProfile(in)
+}
