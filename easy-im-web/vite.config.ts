@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
+import fs from 'node:fs'
 import path from 'node:path'
 
-const BACKEND_HOST = '192.168.200.129'
+const infraEnvPath = path.resolve(__dirname, '../go-im/infra.host.env')
+const infraEnv = fs.readFileSync(infraEnvPath, 'utf8')
+const BACKEND_HOST = infraEnv.match(/^VM_IP=(.+)$/m)?.[1]?.trim() || '127.0.0.1'
 
 export default defineConfig({
   plugins: [vue(), UnoCSS()],
