@@ -66,6 +66,8 @@ func (l *FriendPutInLogic) FriendPutIn(req *types.FriendPutInReq) (resp *types.F
 		ReqMsg:  req.ReqMsg,
 		ReqTime: req.ReqTime,
 	})
-	logx.Info("问题排查。成功")
+	if err != nil {
+		return nil, err
+	}
 	return
 }
