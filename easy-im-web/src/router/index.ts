@@ -12,6 +12,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'chat', name: 'chat', component: () => import('@/views/chat/Index.vue') },
       { path: 'chat/:conversationId', name: 'chat-detail', component: () => import('@/views/chat/Index.vue') },
       { path: 'contacts', name: 'contacts', component: () => import('@/views/contacts/Index.vue') },
+      { path: 'contacts/requests', name: 'contact-requests', component: () => import('@/views/contacts/Index.vue') },
       { path: 'contacts/:friendId', name: 'contact-detail', component: () => import('@/views/contacts/Index.vue') },
       { path: 'settings', name: 'settings', component: () => import('@/views/settings/Index.vue') },
     ],
