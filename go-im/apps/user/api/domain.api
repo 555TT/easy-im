@@ -39,7 +39,6 @@ LoginResp{
 )
 type (
 UserInfoReq{
-    UserId string `json:"user_id"`
 }
 UserInfoResp{
     Info User `json:"user"`
