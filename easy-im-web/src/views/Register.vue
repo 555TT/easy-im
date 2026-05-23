@@ -16,9 +16,16 @@ const nickname = ref('')
 const sex = ref<number>(1)
 const submitting = ref(false)
 
+// 中国大陆手机号：11 位，1 开头，第二位 3-9
+const phoneRegex = /^1[3-9]\d{9}$/
+
 async function submit(): Promise<void> {
   if (!phone.value || !password.value || !nickname.value) {
     ElMessage.warning('请填写完整')
+    return
+  }
+  if (!phoneRegex.test(phone.value)) {
+    ElMessage.warning('手机号格式不正确')
     return
   }
   submitting.value = true

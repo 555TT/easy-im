@@ -5,25 +5,32 @@ import * as socialApi from '@/api/social'
 import { ApiError } from '@/api/http'
 
 const open = defineModel<boolean>('open', { default: false })
-const userId = ref('')
+const phone = ref('')
 const msg = ref('')
 const submitting = ref(false)
 
+// 中国大陆手机号：11 位，1 开头，第二位 3-9
+const phoneRegex = /^1[3-9]\d{9}$/
+
 async function submit(): Promise<void> {
-  if (!userId.value) {
-    ElMessage.warning('请输入用户 ID')
+  if (!phone.value) {
+    ElMessage.warning('请输入对方手机号')
+    return
+  }
+  if (!phoneRegex.test(phone.value)) {
+    ElMessage.warning('手机号格式不正确')
     return
   }
   submitting.value = true
   try {
     await socialApi.sendFriendRequest({
-      user_id: userId.value,
+      phone: phone.value,
       req_msg: msg.value,
       req_time: Date.now(),
     })
     ElMessage.success('申请已发送')
     open.value = false
-    userId.value = ''
+    phone.value = ''
     msg.value = ''
   } catch (err) {
     const m = err instanceof ApiError ? err.message : '发送失败'
@@ -37,8 +44,8 @@ async function submit(): Promise<void> {
 <template>
   <el-dialog v-model="open" title="添加好友" width="380px">
     <el-form>
-      <el-form-item label="对方用户 ID">
-        <el-input v-model="userId" placeholder="对方 user_id" />
+      <el-form-item label="对方手机号">
+        <el-input v-model="phone" placeholder="请输入对方手机号" maxlength="11" />
       </el-form-item>
       <el-form-item label="附言">
         <el-input v-model="msg" type="textarea" :rows="2" />

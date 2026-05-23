@@ -32,16 +32,15 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, error) {
-	u := models.User{}
 	var err error
-	// 1.检查用户是否存在(phone)
-	err = l.svcCtx.CSvc.GetUserByPhone(&u, in.Phone)
+	// 1.检查手机号是否已被注册
+	existing := models.User{}
+	err = l.svcCtx.CSvc.GetUserByPhone(&existing, in.Phone)
 	if err != nil {
-		if u.ID == "" {
-			return nil, errors.WithStack(xerr.PhoneNotFound)
-		}
-		return nil, errors.Wrapf(xerr.NewDBErr(), "find api by phone "+
-			" err %v req %v", err, in.Phone)
+		return nil, errors.Wrapf(xerr.NewDBErr(), "find api by phone err %v req %v", err, in.Phone)
+	}
+	if existing.ID != "" {
+		return nil, errors.WithStack(xerr.PhoneAlreadyRegistered)
 	}
 
 	// 2.定义新增用户
@@ -67,9 +66,9 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		return nil, errors.Wrapf(xerr.NewDBErr(), "save api %v failed ,err %v", in, err)
 	}
 
-	// 4. 生成token
+	// 4. 生成token，使用新建用户的 ID
 	now := time.Now().Unix()
-	token, err := ctxdata.GetJwtToken(l.svcCtx.Config.Jwt.AccessSecret, now, l.svcCtx.Config.Jwt.AccessExpire, u.ID)
+	token, err := ctxdata.GetJwtToken(l.svcCtx.Config.Jwt.AccessSecret, now, l.svcCtx.Config.Jwt.AccessExpire, U.ID)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "extdata get jwt token"+
 			" err %v", in.Phone)

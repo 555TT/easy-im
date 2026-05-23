@@ -28,7 +28,7 @@ type FriendPutInListResp struct {
 type FriendPutInReq struct {
 	ReqMsg  string `json:"req_msg,omitempty"`
 	ReqTime int64  `json:"req_time,omitempty"`
-	UserId  string `json:"user_id"`
+	Phone   string `json:"phone"`
 }
 
 type FriendPutInResp struct {

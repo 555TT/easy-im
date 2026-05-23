@@ -54,7 +54,7 @@ export interface FriendsOnlineResp {
   onlineList: Record<string, boolean>
 }
 export interface FriendPutInReq {
-  user_id: string
+  phone: string
   req_msg: string
   req_time: number
 }
