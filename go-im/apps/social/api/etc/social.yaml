@@ -5,22 +5,22 @@ Port: 8881
 SocialRpc:
   Etcd:
     Hosts:
-      - 192.168.200.129:3379
+      - 127.0.0.1:3379
     Key: social.rpc
 UserRpc:
   Etcd:
     Hosts:
-      - 192.168.200.129:3379
+      - 127.0.0.1:3379
     Key: user.rpc
 ImRpc:
   Etcd:
     Hosts:
-      - 192.168.200.129:3379
+      - 127.0.0.1:3379
     Key: im.rpc
 
 
 Redisx:
-  Host: 192.168.200.129:16379
+  Host: 127.0.0.1:16379
   Pass: easy-chat
 
 JwtAuth:

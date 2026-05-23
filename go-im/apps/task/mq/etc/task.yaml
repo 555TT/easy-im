@@ -4,13 +4,13 @@ ListenOn: 0.0.0.0:10091
 SocialRpc:
   Etcd:
     Hosts:
-      - 192.168.200.129:3379
+      - 127.0.0.1:3379
     Key: social.rpc
 
 MsgChatTransfer:
   Name: MsgChatTransfer
   Brokers:
-    - 192.168.200.129:9092
+    - 127.0.0.1:9092
   Group: kafka
   Topic: MsgChatTransfer
   Offset: first
@@ -19,7 +19,7 @@ MsgChatTransfer:
 MsgReadTransfer:
   Name: MsgReadTransfer
   Brokers:
-    - 192.168.200.129:9092
+    - 127.0.0.1:9092
   Group: kafka
   Topic: MsgReadTransfer
   Offset: first
@@ -31,13 +31,13 @@ MsgReadHandler:
   GroupMsgReadRecordDelayCount: 2
 
 Mongo:
-  Url: "mongodb://root:easy-chat@192.168.200.129:47017"
+  Url: "mongodb://root:easy-chat@127.0.0.1:47017"
   Db: easy-chat
 
 Redisx:
-  Host: 192.168.200.129:16379
+  Host: 127.0.0.1:16379
   Type: node
   Pass: easy-chat
 
 Ws:
-  Host: 192.168.200.129:10090
+  Host: 127.0.0.1:10090
