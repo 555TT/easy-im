@@ -2,6 +2,8 @@ package friend
 
 import (
 	"context"
+	"regexp"
+
 	"github.com/peninsula12/easy-im/go-im/apps/social/api/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/social/api/internal/types"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
@@ -9,7 +11,6 @@ import (
 	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
 	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
 	"github.com/pkg/errors"
-	"regexp"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,7 +40,7 @@ func (l *FriendPutInLogic) FriendPutIn(req *types.FriendPutInReq) (resp *types.F
 	if !phoneRegexp.MatchString(req.Phone) {
 		return nil, errors.WithStack(xerr.ParamError)
 	}
-
+	logx.Infof("问题排查phone: %s", req.Phone)
 	// 2. 通过手机号查目标用户
 	findResp, err := l.svcCtx.User.FindUser(l.ctx, &user.FindUserReq{
 		Phone: req.Phone,
@@ -47,6 +48,7 @@ func (l *FriendPutInLogic) FriendPutIn(req *types.FriendPutInReq) (resp *types.F
 	if err != nil {
 		return nil, err
 	}
+	logx.Infof("问题排查findResp: %+v", findResp)
 	if len(findResp.Users) == 0 || findResp.Users[0].Id == "" {
 		return nil, errors.WithStack(xerr.FriendPhoneNotRegistered)
 	}
@@ -64,5 +66,6 @@ func (l *FriendPutInLogic) FriendPutIn(req *types.FriendPutInReq) (resp *types.F
 		ReqMsg:  req.ReqMsg,
 		ReqTime: req.ReqTime,
 	})
+	logx.Info("问题排查。成功")
 	return
 }
