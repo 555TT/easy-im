@@ -39,7 +39,7 @@ func (m *baseMsgTransfer) single(ctx context.Context, data *ws.Push) error {
 		Method:    "push",
 		// todo: 此处可能需要更改
 		UserId: "",
-		FormId: status.SYSTEM_ROOT_UID,
+		FromId: status.SYSTEM_ROOT_UID,
 		Data:   data,
 	})
 }
@@ -65,7 +65,7 @@ func (m *baseMsgTransfer) group(ctx context.Context, data *ws.Push) error {
 		Method:    "push",
 		// todo: 此处可能需要更改
 		UserId: "",
-		FormId: status.SYSTEM_ROOT_UID,
+		FromId: status.SYSTEM_ROOT_UID,
 		Data:   data,
 	})
 

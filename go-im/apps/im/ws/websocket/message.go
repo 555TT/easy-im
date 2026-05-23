@@ -20,14 +20,14 @@ type Message struct {
 	errCount  int       `json:"errCount"`
 	Method    string    `json:"method,omitempty"`
 	UserId    string    `json:"userId,omitempty"`
-	FormId    string    `json:"formId,omitempty"`
+	FromId    string    `json:"fromId,omitempty"`
 	Data      any       `json:"data,omitempty"`
 }
 
-func NewMessage(formId string, data any) *Message {
+func NewMessage(fromId string, data any) *Message {
 	return &Message{
 		FrameType: FrameData,
-		FormId:    formId,
+		FromId:    fromId,
 		Data:      data,
 	}
 }

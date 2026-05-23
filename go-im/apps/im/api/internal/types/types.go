@@ -11,7 +11,7 @@ type ChatLog struct {
 	MsgType        int32  `json:"msgType,omitempty"`
 	MsgContent     string `json:"msgContent,omitempty"`
 	ChatType       int32  `json:"chatType,omitempty"`
-	SendTime       int64  `json:"SendTime,omitempty"`
+	SendTime       int64  `json:"sendTime,omitempty"`
 }
 
 type ChatLogReq struct {
@@ -28,7 +28,7 @@ type ChatLogResp struct {
 
 type Conversation struct {
 	ConversationId string `json:"conversationId,omitempty"`
-	ChatType       int32  `json:"ChatType,omitempty"`
+	ChatType       int32  `json:"chatType,omitempty"`
 	IsShow         bool   `json:"isShow,omitempty"`
 	Seq            int64  `json:"seq,omitempty"`
 	Read           int32  `json:"read,omitempty"`
@@ -60,7 +60,7 @@ type PutConversationsResp struct {
 type SetUpUserConversationReq struct {
 	SendId   string `json:"sendId,omitempty"`
 	RecvId   string `json:"recvId,omitempty"`
-	ChatType int32  `json:"ChatType,omitempty"`
+	ChatType int32  `json:"chatType,omitempty"`
 }
 
 type SetUpUserConversationResp struct {

@@ -28,7 +28,7 @@ type FriendPutInListResp struct {
 type FriendPutInReq struct {
 	ReqMsg  string `json:"req_msg,omitempty"`
 	ReqTime int64  `json:"req_time,omitempty"`
-	UserId  string `json:"user_uid"`
+	UserId  string `json:"user_id"`
 }
 
 type FriendPutInResp struct {
@@ -131,7 +131,7 @@ type GroupUserListReq struct {
 }
 
 type GroupUserListResp struct {
-	List []*GroupMembers `json:"List,omitempty"`
+	List []*GroupMembers `json:"list,omitempty"`
 }
 
 type GroupUserOnlineReq struct {
