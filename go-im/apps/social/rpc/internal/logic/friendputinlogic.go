@@ -53,8 +53,10 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 	}
 	logx.Infof("问题排查2，friendReq:%+v", friendReq)
 	// 3. 创建申请记录
+	newID := suid.GenerateID()
+	logx.Infof("问题排查3，newID:%s, in.UserId:%s, in.ReqUid:%s, ReqTime:%v, HandledAt:%v", newID, in.UserId, in.ReqUid, time.Unix(in.ReqTime, 0), time.Now())
 	err = l.svcCtx.CSvc.DB.Debug().Create(&models.FriendRequest{
-		ID:           suid.GenerateID(),
+		ID:           newID,
 		UserID:       in.UserId,
 		ReqUID:       in.ReqUid,
 		ReqMsg:       in.ReqMsg,
@@ -63,7 +65,7 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 		HandledAt:    time.Now(),
 	}).Error
 	if err != nil {
-		return nil, errors.Wrapf(xerr.NewDBErr(), "create friend request by user_id %v and req_uid %v err %v", in.UserId, in.ReqUid, err)
+		return nil, errors.Wrapf(xerr.NewDBErr(), "create friend request by user_id %v and req_uid %v, rawErr: %v", in.UserId, in.ReqUid, err)
 	}
 	logx.Info("问题排查2，成功")
 	return &social.FriendPutInResp{}, nil
