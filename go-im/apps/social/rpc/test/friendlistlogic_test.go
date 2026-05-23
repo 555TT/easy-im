@@ -8,47 +8,17 @@ import (
 )
 
 func TestFriendListLogic_FriendList(t *testing.T) {
-	type args struct {
-		in *social.FriendListReq
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    bool
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "name1",
-			args: args{
-				in: &social.FriendListReq{
-					UserId: "1842843962742673408",
-				},
-			},
-			want:    true,
-			wantErr: false,
-		},
-		{
-			name: "name2",
-			args: args{
-				in: &social.FriendListReq{
-					UserId: "1842843971269693440",
-				},
-			},
-			want:    true,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			l := logic.NewFriendListLogic(context.Background(), svcCtx)
-			got, err := l.FriendList(tt.args.in)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FriendList() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if !tt.wantErr {
-				l.Logger.Infof("got: %v", got)
-			}
-		})
-	}
+	t.Run("returns empty list when user has no friends", func(t *testing.T) {
+		l := logic.NewFriendListLogic(context.Background(), svcCtx)
+		got, err := l.FriendList(&social.FriendListReq{UserId: "user-with-no-friends"})
+		if err != nil {
+			t.Fatalf("FriendList() error = %v, want nil", err)
+		}
+		if got == nil {
+			t.Fatal("FriendList() got nil response")
+		}
+		if len(got.List) != 0 {
+			t.Fatalf("FriendList() list length = %d, want 0", len(got.List))
+		}
+	})
 }

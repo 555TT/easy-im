@@ -34,7 +34,7 @@ func (l *FriendListLogic) FriendList(in *social.FriendListReq) (*social.FriendLi
 		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend list by user_id %v err %v", in.UserId, result.Error)
 	}
 	if result.RowsAffected == 0 {
-		return nil, errors.WithStack(xerr.FriendListNotFound)
+		return &social.FriendListResp{}, nil
 	}
 
 	var friends []*social.Friends

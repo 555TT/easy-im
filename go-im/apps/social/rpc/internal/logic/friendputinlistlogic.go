@@ -34,7 +34,7 @@ func (l *FriendPutInListLogic) FriendPutInList(in *social.FriendPutInListReq) (*
 		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend request list by req_uid %v err %v", in.UserId, result.Error)
 	}
 	if result.RowsAffected == 0 {
-		return nil, errors.WithStack(xerr.FriendReqListNotFound)
+		return &social.FriendPutInListResp{}, nil
 	}
 	var friends []*social.FriendRequests
 
@@ -46,7 +46,7 @@ func (l *FriendPutInListLogic) FriendPutInList(in *social.FriendPutInListReq) (*
 			ReqMsg:       friend.ReqMsg,
 			ReqTime:      friend.ReqTime.Unix(),
 			HandleResult: int32(friend.HandleResult),
-			HandleMsg: friend.HandleMsg,
+			HandleMsg:    friend.HandleMsg,
 		})
 	}
 

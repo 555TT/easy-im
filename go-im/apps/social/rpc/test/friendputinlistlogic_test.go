@@ -8,37 +8,17 @@ import (
 )
 
 func TestFriendPutInListLogic_FriendPutInList(t *testing.T) {
-	type args struct {
-		in *social.FriendPutInListReq
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    bool
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "name1",
-			args: args{
-				in: &social.FriendPutInListReq{
-					UserId: "1842843962742673408",
-				},
-			},
-			want:    true,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			l := logic.NewFriendPutInListLogic(context.Background(), svcCtx)
-			got, err := l.FriendPutInList(tt.args.in)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FriendPutInList() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if !tt.wantErr {
-				l.Logger.Infof("FriendPutInList() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	t.Run("returns empty list when user has no friend requests", func(t *testing.T) {
+		l := logic.NewFriendPutInListLogic(context.Background(), svcCtx)
+		got, err := l.FriendPutInList(&social.FriendPutInListReq{UserId: "user-with-no-friend-requests"})
+		if err != nil {
+			t.Fatalf("FriendPutInList() error = %v, want nil", err)
+		}
+		if got == nil {
+			t.Fatal("FriendPutInList() got nil response")
+		}
+		if len(got.List) != 0 {
+			t.Fatalf("FriendPutInList() list length = %d, want 0", len(got.List))
+		}
+	})
 }

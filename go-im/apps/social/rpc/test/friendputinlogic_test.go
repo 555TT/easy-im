@@ -2,17 +2,17 @@ package test
 
 import (
 	"context"
+	"flag"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/internal/config"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/internal/logic"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
-	"flag"
 	"github.com/zeromicro/go-zero/core/conf"
 	"testing"
 	"time"
 )
 
-var configFile = flag.String("f", "../etc/dev/social.yaml", "the config file")
+var configFile = flag.String("f", "../etc/social.yaml", "the config file")
 
 var svcCtx *svc.ServiceContext
 
