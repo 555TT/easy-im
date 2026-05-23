@@ -12,9 +12,10 @@ function send(): void {
   text.value = ''
 }
 
-function onKeydown(e: KeyboardEvent): void {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
+function onKeydown(e: Event): void {
+  const ke = e as KeyboardEvent
+  if (ke.key === 'Enter' && !ke.shiftKey) {
+    ke.preventDefault()
     send()
   }
 }

@@ -1,8 +1,10 @@
-import axios, { type AxiosInstance, AxiosError } from 'axios'
+import axios, { type AxiosInstance, type AxiosError } from 'axios'
 
 export class ApiError extends Error {
-  constructor(public code: number, message: string) {
+  code: number
+  constructor(code: number, message: string) {
     super(message)
+    this.code = code
     this.name = 'ApiError'
   }
 }

@@ -18,7 +18,7 @@ class WSClient {
   private reconnectTimer: number | null = null
   private retries = 0
   private manualClose = false
-  private listeners: { [K in keyof EventMap]?: Set<Listener<K>> } = {}
+  private listeners = new Map<keyof EventMap, Set<(payload: any) => void>>()
 
   connect(token: string): void {
     if (this.ws && this.ws.readyState <= 1 && this.token === token) return
@@ -50,13 +50,17 @@ class WSClient {
   }
 
   on<K extends keyof EventMap>(event: K, fn: Listener<K>): () => void {
-    const set = (this.listeners[event] ??= new Set()) as Set<Listener<K>>
-    set.add(fn)
-    return () => set.delete(fn)
+    let set = this.listeners.get(event)
+    if (!set) {
+      set = new Set()
+      this.listeners.set(event, set)
+    }
+    set.add(fn as (payload: any) => void)
+    return () => set!.delete(fn as (payload: any) => void)
   }
 
   private emit<K extends keyof EventMap>(event: K, payload: EventMap[K]): void {
-    this.listeners[event]?.forEach((fn) => (fn as Listener<K>)(payload))
+    this.listeners.get(event)?.forEach((fn) => (fn as Listener<K>)(payload))
   }
 
   private raw(text: string): void {
