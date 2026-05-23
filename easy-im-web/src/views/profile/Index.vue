@@ -133,7 +133,7 @@ async function loadProfile(): Promise<void> {
   if (!auth.userId) return
   loading.value = true
   try {
-    const resp = await userApi.getUserInfo(auth.userId)
+    const resp = await userApi.getUserInfo()
     info.value = resp.user
     fillForm(resp.user)
   } catch (err) {

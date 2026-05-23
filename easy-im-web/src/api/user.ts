@@ -16,8 +16,8 @@ export function register(body: RegisterReq): Promise<LoginResp> {
   return userHttp.post('/register', body)
 }
 
-export function getUserInfo(userId: string): Promise<UserInfoResp> {
-  return userHttp.get('/user', { params: { user_id: userId } })
+export function getUserInfo(): Promise<UserInfoResp> {
+  return userHttp.get('/user')
 }
 
 export function updateProfile(body: UpdateProfileReq): Promise<UpdateProfileResp> {

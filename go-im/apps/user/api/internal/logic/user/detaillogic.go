@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/user"
 	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
 
@@ -27,8 +28,8 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 }
 
 func (l *DetailLogic) Detail(req *types.UserInfoReq) (resp *types.UserInfoResp, err error) {
-	// todo: add your logic here and delete this line
 	uid := ctxdata.GetUId(l.ctx)
+	logx.Infof("uid: %s", uid)
 	userInfoResp, err := l.svcCtx.User.GetUserInfo(l.ctx, &user.GetUserInfoReq{
 		User: uid,
 	})
