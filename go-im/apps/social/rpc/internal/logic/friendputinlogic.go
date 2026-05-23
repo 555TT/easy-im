@@ -54,13 +54,13 @@ func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.Frien
 	logx.Infof("问题排查2，friendReq:%+v", friendReq)
 	// 3. 创建申请记录
 	newID := suid.GenerateID()
-	logx.Infof("问题排查3，newID:%s, in.UserId:%s, in.ReqUid:%s, ReqTime:%v, HandledAt:%v", newID, in.UserId, in.ReqUid, time.Unix(in.ReqTime, 0), time.Now())
+	logx.Infof("问题排查2，newID:%s, in.UserId:%s, in.ReqUid:%s, ReqTime:%v, HandledAt:%v", newID, in.UserId, in.ReqUid, time.UnixMilli(in.ReqTime), time.Now())
 	err = l.svcCtx.CSvc.DB.Debug().Create(&models.FriendRequest{
 		ID:           newID,
 		UserID:       in.UserId,
 		ReqUID:       in.ReqUid,
 		ReqMsg:       in.ReqMsg,
-		ReqTime:      time.Unix(in.ReqTime, 0),
+		ReqTime:      time.UnixMilli(in.ReqTime),
 		HandleResult: status.PendingHandlerResult,
 		HandledAt:    time.Now(),
 	}).Error

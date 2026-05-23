@@ -41,7 +41,7 @@ func (l *GroupPutinLogic) GroupPutin(in *social.GroupPutinReq) (*social.GroupPut
 		ReqID:         in.ReqId,
 		GroupID:       in.GroupId,
 		ReqMsg:        in.ReqMsg,
-		ReqTime:       time.Unix(in.ReqTime, 0),
+		ReqTime:       time.UnixMilli(in.ReqTime),
 		JoinSource:    ConvertToInt8(in.JoinSource),
 		InviterUserID: in.InviterUid,
 		HandleResult:  status.PendingHandlerResult,
