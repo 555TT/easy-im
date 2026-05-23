@@ -1,0 +1,25 @@
+Name: social.rpc
+ListenOn: 0.0.0.0:10001
+Mode: test
+
+Etcd:
+  Hosts:
+  - 118.178.120.11:3379
+  Key: social.rpc
+
+Mysql:
+  DataSource: root:easy-chat@tcp(118.178.120.11:13306)/easy_chat?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+Cache:
+  - Host: 118.178.120.11:16379
+    Type: node
+    Pass: easy-chat
+Jwt:
+  AccessSecret: easy-chat
+  AccessExpire: 864000
+
+
+Telemetry:
+  Name: social.rpc
+  Endpoint: http://118.178.120.11:14268/api/traces
+  Batcher: jaeger
