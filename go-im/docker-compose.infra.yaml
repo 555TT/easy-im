@@ -1,20 +1,26 @@
 services:
   etcd:
-    image: bitnami/etcd:3.5
+    image: quay.io/coreos/etcd:v3.5.18
     container_name: etcd
     ports:
       - "3379:2379"
       - "3380:2380"
     environment:
       ETCD_ENABLE_V2: "true"
-      ALLOW_NONE_AUTHENTICATION: "yes"
       ETCD_NAME: etcd
       ETCD_ADVERTISE_CLIENT_URLS: http://192.168.200.129:3379
       ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
       ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_CLUSTER: etcd=http://0.0.0.0:2380
+      ETCD_INITIAL_CLUSTER_STATE: new
+      ETCD_INITIAL_CLUSTER_TOKEN: easy-im-etcd
+      ALLOW_NONE_AUTHENTICATION: "yes"
     volumes:
-      - ./components/etcd/data:/bitnami/etcd/data
-      - ./components/etcd/logs:/bitnami/etcd/logs
+      - ./components/etcd/data:/etcd-data
+    command: >
+      /usr/local/bin/etcd
+      --data-dir=/etcd-data
     restart: always
 
   redis:
@@ -65,18 +71,19 @@ services:
     restart: always
 
   zookeeper:
-    image: bitnami/zookeeper:3.9
+    image: zookeeper:3.9
     container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
-      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOO_4LW_COMMANDS_WHITELIST: "*"
     volumes:
-      - ./components/zookeeper/data:/bitnami/zookeeper
+      - ./components/zookeeper/data:/data
+      - ./components/zookeeper/datalog:/datalog
     restart: always
 
   kafka:
-    image: bitnami/kafka:3.7
+    image: bitnamilegacy/kafka:3.7
     container_name: kafka
     ports:
       - "9092:9092"
