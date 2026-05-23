@@ -12,7 +12,7 @@ const contact = useContactStore()
 const addOpen = ref(false)
 
 const friendId = computed(() => (route.params.friendId as string) || '')
-const showRequests = computed(() => friendId.value === 'requests')
+const showRequests = computed(() => route.name === 'contact-requests')
 
 onMounted(() => { contact.fetchAll() })
 </script>
