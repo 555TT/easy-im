@@ -20,7 +20,7 @@ export const useContactStore = defineStore('contact', () => {
     ])
     onlineMap.value = ol.onlineList ?? {}
     friends.value = (fl.list ?? []).map((f) => ({
-      id: f.id ?? '',
+      id: f.id || f.friend_uid || '',
       userId: f.friend_uid ?? '',
       nickname: f.nickname ?? '',
       avatar: f.avatar ?? '',

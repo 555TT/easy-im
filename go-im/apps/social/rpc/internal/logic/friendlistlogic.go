@@ -41,6 +41,7 @@ func (l *FriendListLogic) FriendList(in *social.FriendListReq) (*social.FriendLi
 
 	for _, friend := range friendList {
 		friends = append(friends, &social.Friends{
+			Id:        friend.ID,
 			FriendUid: friend.FriendUID,
 			Remark:    friend.Remark,
 		})
