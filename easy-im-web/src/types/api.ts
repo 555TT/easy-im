@@ -113,6 +113,7 @@ export interface PutConversationsReq {
 }
 export interface ChatLogReq {
   msgId?: string
+  userId?: string
   conversationId: string
   startSendTime?: number
   endSendTime?: number

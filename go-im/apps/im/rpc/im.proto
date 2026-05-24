@@ -50,6 +50,7 @@ message PutConversationsReq {
 message PutConversationsResp {}
 
 message GetChatLogReq {
+  string userId = 6;
   string conversationId = 1;
   int64 startSendTime = 2;
   int64 endSendTime = 3;

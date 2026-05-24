@@ -31,6 +31,7 @@ func NewGetChatLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCha
 
 func (l *GetChatLogLogic) GetChatLog(req *types.ChatLogReq) (resp *types.ChatLogResp, err error) {
 	data, err := l.svcCtx.GetChatLog(l.ctx, &imclient.GetChatLogReq{
+		UserId:         req.UserId,
 		ConversationId: req.ConversationId,
 		StartSendTime:  req.StartSendTime,
 		EndSendTime:    req.EndSendTime,

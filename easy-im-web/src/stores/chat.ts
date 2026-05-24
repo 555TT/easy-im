@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type { Message, MessageStatus } from '@/types/domain'
 import * as imApi from '@/api/im'
 import { ChatType, MType } from '@/types/domain'
+import { useAuthStore } from '@/stores/auth'
 
 export const useChatStore = defineStore('chat', () => {
   const byConv = ref<Record<string, Message[]>>({})
@@ -41,7 +42,9 @@ export const useChatStore = defineStore('chat', () => {
   }
 
   async function fetchHistory(conversationId: string, count = 50): Promise<void> {
+    const auth = useAuthStore()
     const resp = await imApi.listChatLog({
+      userId: auth.userId,
       conversationId,
       endSendTime: Date.now(),
       count,

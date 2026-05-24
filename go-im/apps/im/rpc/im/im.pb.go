@@ -450,6 +450,7 @@ type GetChatLogReq struct {
 	EndSendTime    int64  `protobuf:"varint,3,opt,name=endSendTime,proto3" json:"endSendTime,omitempty"`
 	Count          int64  `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
 	MsgId          string `protobuf:"bytes,5,opt,name=msgId,proto3" json:"msgId,omitempty"`
+	UserId         string `protobuf:"bytes,6,opt,name=userId,proto3" json:"userId,omitempty"`
 }
 
 func (x *GetChatLogReq) Reset() {
@@ -515,6 +516,13 @@ func (x *GetChatLogReq) GetCount() int64 {
 func (x *GetChatLogReq) GetMsgId() string {
 	if x != nil {
 		return x.MsgId
+	}
+	return ""
+}
+
+func (x *GetChatLogReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
 	}
 	return ""
 }

@@ -3,10 +3,11 @@ package handler
 import (
 	"net/http"
 
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"github.com/peninsula12/easy-im/go-im/apps/im/api/internal/logic"
 	"github.com/peninsula12/easy-im/go-im/apps/im/api/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/im/api/internal/types"
+	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 // 根据用户获取聊天记录
@@ -17,6 +18,7 @@ func getChatLogHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
+		req.UserId = ctxdata.GetUId(r.Context())
 
 		l := logic.NewGetChatLogLogic(r.Context(), svcCtx)
 		resp, err := l.GetChatLog(&req)

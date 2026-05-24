@@ -33,12 +33,21 @@ export const useConversationStore = defineStore('conversation', () => {
 
   /**
    * Derive peerUserId / peerNickname from conversationId + friends list.
+   * conversationId format: "userId1_userId2" (sorted). One of the two parts
+   * should match a friend of the current user.
    * Call this after both fetchAll (conversations) and contact.fetchAll complete.
    */
   function populatePeerFromFriends(friends: Friend[]): void {
+    const friendMap = new Map<string, Friend>()
+    for (const f of friends) {
+      friendMap.set(f.userId, f)
+    }
     list.value.forEach((c) => {
       if (c.peerUserId) return
-      const peer = friends.find((f) => c.conversationId.includes(f.userId))
+      const parts = c.conversationId.split('_')
+      if (parts.length !== 2) return
+      // Try both parts — one of them is the peer (friend)
+      const peer = friendMap.get(parts[0]) || friendMap.get(parts[1])
       if (peer) {
         c.peerUserId = peer.userId
         c.peerNickname = peer.nickname

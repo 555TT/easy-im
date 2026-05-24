@@ -20,6 +20,7 @@ type ChatLogReq struct {
 	StartSendTime  int64  `json:"startSendTime,omitempty"`
 	EndSendTime    int64  `json:"endSendTime,omitempty"`
 	Count          int64  `json:"count,omitempty"`
+	UserId         string `json:"userId,omitempty"`
 }
 
 type ChatLogResp struct {
