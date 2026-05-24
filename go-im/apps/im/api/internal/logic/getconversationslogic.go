@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+
 	"github.com/jinzhu/copier"
 	"github.com/peninsula12/easy-im/go-im/apps/im/rpc/im"
 	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
@@ -28,7 +29,6 @@ func NewGetConversationsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetConversationsLogic) GetConversations(req *types.GetConversationsReq) (resp *types.GetConversationsResp, err error) {
-	// todo: add your logic here and delete this line
 	uid := ctxdata.GetUId(l.ctx)
 	data, err := l.svcCtx.GetConversations(l.ctx, &im.GetConversationsReq{
 		UserId: uid,

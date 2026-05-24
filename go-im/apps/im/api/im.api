@@ -15,11 +15,11 @@ type (
 		MsgType        int32  `json:"msgType,omitempty"`
 		MsgContent     string `json:"msgContent,omitempty"`
 		ChatType       int32  `json:"chatType,omitempty"`
-		SendTime       int64  `json:"SendTime,omitempty"`
+		SendTime       int64  `json:"sendTime,omitempty"`
 	}
 	Conversation {
 		ConversationId string `json:"conversationId,omitempty"`
-		ChatType       int32  `json:"ChatType,omitempty"`
+		ChatType       int32  `json:"chatType,omitempty"`
 		IsShow         bool   `json:"isShow,omitempty"`
 		Seq            int64  `json:"seq,omitempty"`
 		Read           int32  `json:"read,omitempty"`
@@ -29,12 +29,10 @@ type (
 // -------------- im api v1 --------------
 type (
 	ChatLogReq {
-		MsgId          string `json:"msgId"`
 		ConversationId string `json:"conversationId"`
 		StartSendTime  int64  `json:"startSendTime,omitempty"`
 		EndSendTime    int64  `json:"endSendTime,omitempty"`
 		Count          int64  `json:"count,omitempty"`
-		UserId         string `json:"userId,omitempty"`
 	}
 	ChatLogResp {
 		List []*ChatLog `json:"list"`
@@ -50,7 +48,7 @@ type (
 	SetUpUserConversationReq {
 		SendId   string `json:"sendId,omitempty"`
 		RecvId   string `json:"recvId,omitempty"`
-		ChatType int32  `json:"ChatType,omitempty"`
+		ChatType int32  `json:"chatType,omitempty"`
 	}
 	setUpUserConversationResp  {}
 	GetChatLogReadRecordsReq {

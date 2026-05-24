@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/peninsula12/easy-im/go-im/apps/im/rpc/imclient"
+	"github.com/peninsula12/easy-im/go-im/pkg/ctxdata"
 	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
 	"github.com/pkg/errors"
 
@@ -30,8 +31,9 @@ func NewGetChatLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCha
 }
 
 func (l *GetChatLogLogic) GetChatLog(req *types.ChatLogReq) (resp *types.ChatLogResp, err error) {
+	uid := ctxdata.GetUId(l.ctx)
 	data, err := l.svcCtx.GetChatLog(l.ctx, &imclient.GetChatLogReq{
-		UserId:         req.UserId,
+		UserId:         uid,
 		ConversationId: req.ConversationId,
 		StartSendTime:  req.StartSendTime,
 		EndSendTime:    req.EndSendTime,

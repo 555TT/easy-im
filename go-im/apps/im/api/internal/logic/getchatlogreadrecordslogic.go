@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+
 	"github.com/peninsula12/easy-im/go-im/apps/im/rpc/im"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/socialclient"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/user"
@@ -29,8 +30,6 @@ func NewGetChatLogReadRecordsLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetChatLogReadRecordsLogic) GetChatLogReadRecords(req *types.GetChatLogReadRecordsReq) (resp *types.GetChatLogReadRecordsResp, err error) {
-	// todo: add your logic here and delete this line
-
 	chatLogs, err := l.svcCtx.ImClient.GetChatLog(l.ctx, &im.GetChatLogReq{
 		MsgId: req.MsgId,
 	})
