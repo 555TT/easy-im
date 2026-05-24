@@ -36,10 +36,15 @@ export const useContactStore = defineStore('contact', () => {
     }))
   }
 
+  async function refreshOnline(): Promise<void> {
+    const ol = await socialApi.listOnlineFriends()
+    setOnline(ol.onlineList ?? {})
+  }
+
   function setOnline(map: Record<string, boolean>): void {
     onlineMap.value = map
     friends.value.forEach((f) => (f.online = !!map[f.userId]))
   }
 
-  return { friends, requests, onlineMap, pendingRequestCount, fetchAll, setOnline }
+  return { friends, requests, onlineMap, pendingRequestCount, fetchAll, refreshOnline, setOnline }
 })
