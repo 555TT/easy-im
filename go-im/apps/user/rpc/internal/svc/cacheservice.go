@@ -153,10 +153,17 @@ func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, emai
 
 func (s *CacheService) UpdateUserPassword(userID, passwordHash string) error {
 	ctx := context.Background()
+	var u models.User
+	if err := s.DB.Where("id = ?", userID).First(&u).Error; err != nil {
+		return err
+	}
 	if err := s.DB.Model(&models.User{}).Where("id = ?", userID).Update("password", passwordHash).Error; err != nil {
 		return err
 	}
-	cacheKeys := []string{"user_id:" + userID, "user_phone:" + userID}
+	cacheKeys := []string{"user_id:" + userID}
+	if u.Phone != "" {
+		cacheKeys = append(cacheKeys, "user_phone:"+u.Phone)
+	}
 	for _, cacheKey := range cacheKeys {
 		if err := s.RDB.Del(ctx, cacheKey).Err(); err != nil {
 			logx.Errorf("failed to invalidate user cache after password update, userID=%s cacheKey=%s err=%v", userID, cacheKey, err)

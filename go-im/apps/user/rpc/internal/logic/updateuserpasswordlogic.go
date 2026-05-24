@@ -62,7 +62,7 @@ func (l *UpdateUserPasswordLogic) UpdateUserPassword(in *user.UpdateUserPassword
 		return nil, errors.Wrapf(xerr.NewServerCommonErr(), "passwordHash gen err %v", err)
 	}
 
-	if err := l.svcCtx.CSvc.DB.Model(&models.User{}).Where("id = ?", in.UserId).Update("password", string(hashed)).Error; err != nil {
+	if err := l.svcCtx.CSvc.UpdateUserPassword(in.UserId, string(hashed)); err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "update user password failed, userId=%s err=%v", in.UserId, err)
 	}
 
