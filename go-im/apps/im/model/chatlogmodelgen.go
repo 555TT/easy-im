@@ -19,10 +19,10 @@ type chatLogModel interface {
 	Insert(ctx context.Context, data *ChatLog) error
 	FindOne(ctx context.Context, id string) (*ChatLog, error)
 	Update(ctx context.Context, data *ChatLog) (*mongo.UpdateResult, error)
-	UpdateMarkRead(ctx context.Context,id primitive.ObjectID,readRecords []byte)error
+	UpdateMarkRead(ctx context.Context, id primitive.ObjectID, readRecords []byte) error
 	Delete(ctx context.Context, id string) (int64, error)
-	ListBySendTime(ctx context.Context, conversationId string,  startSendTime, endSendTime, count int64) ([]*ChatLog, error)
-	ListByMsgIds(ctx context.Context,ids []string)([]*ChatLog, error)
+	ListBySendTime(ctx context.Context, conversationId string, startSendTime, endSendTime, count int64) ([]*ChatLog, error)
+	ListByMsgIds(ctx context.Context, ids []string) ([]*ChatLog, error)
 }
 
 type defaultChatLogModel struct {
@@ -70,9 +70,9 @@ func (m *defaultChatLogModel) Update(ctx context.Context, data *ChatLog) (*mongo
 	return res, err
 }
 
-func (m *defaultChatLogModel)UpdateMarkRead(ctx context.Context,id primitive.ObjectID,readRecords []byte)error{
-	_,err := m.conn.UpdateOne(ctx,bson.M{"_id":id},bson.M{"$set":bson.M{
-		"readRecords":readRecords,
+func (m *defaultChatLogModel) UpdateMarkRead(ctx context.Context, id primitive.ObjectID, readRecords []byte) error {
+	_, err := m.conn.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
+		"readRecords": readRecords,
 	}})
 	return err
 }
@@ -89,36 +89,39 @@ func (m *defaultChatLogModel) Delete(ctx context.Context, id string) (int64, err
 
 var DefaultChatLogCount int64 = 100
 
-func (m *defaultChatLogModel) ListBySendTime(ctx context.Context,conversationId string, startSendTime, endSendTime, limit int64) ([]*ChatLog, error) {
+func (m *defaultChatLogModel) ListBySendTime(ctx context.Context, conversationId string, startSendTime, endSendTime, limit int64) ([]*ChatLog, error) {
 	var data []*ChatLog
 
 	opt := options.FindOptions{
 		Limit: &DefaultChatLogCount,
-		Sort:                bson.M{
+		Sort: bson.M{
 			"sendTime": -1,
 		},
 	}
 
-	if limit > 0{
+	if limit > 0 {
 		opt.Limit = &limit
 	}
 
 	filter := bson.M{
 		"conversationId": conversationId,
 	}
-	if endSendTime  >0 {
-		//  startSendTime &gt; x endSendTime
+	if startSendTime > 0 && endSendTime > 0 {
 		filter["sendTime"] = bson.M{
-			"$gt":  endSendTime,
-			"$lte": startSendTime,
+			"$gt": startSendTime,
+			"$lt": endSendTime,
 		}
-	} else {
+	} else if endSendTime > 0 {
 		filter["sendTime"] = bson.M{
-			"$lt": startSendTime,
+			"$lt": endSendTime,
+		}
+	} else if startSendTime > 0 {
+		filter["sendTime"] = bson.M{
+			"$gt": startSendTime,
 		}
 	}
 
-	err := m.conn.Find(ctx, &data, filter,&opt)
+	err := m.conn.Find(ctx, &data, filter, &opt)
 	switch err {
 	case nil:
 		return data, nil
@@ -142,7 +145,7 @@ func (m *defaultChatLogModel) ListByMsgIds(ctx context.Context, msgIds []string)
 
 	filter := bson.M{
 		"_id": bson.M{
-			"$in": ids,  // 注意这里应该是 $in 而不是 &in
+			"$in": ids, // 注意这里应该是 $in 而不是 &in
 		},
 	}
 
