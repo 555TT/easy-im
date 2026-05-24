@@ -46,7 +46,7 @@ async function submit(): Promise<void> {
           <el-input v-model="phone" placeholder="手机号" size="large" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="password" type="password" placeholder="密码" size="large" show-password />
+          <el-input v-model="password" type="password" placeholder="密码" size="large" show-password @keyup.enter="submit" />
         </el-form-item>
         <el-button type="primary" size="large" :loading="submitting" class="w-full" @click="submit">
           登录

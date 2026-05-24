@@ -4,13 +4,18 @@ import NavRail from '@/components/NavRail.vue'
 import { wsClient } from '@/ws/client'
 import { useAuthStore } from '@/stores/auth'
 import { useContactStore } from '@/stores/contact'
+import { useConversationStore } from '@/stores/conversation'
 
 const auth = useAuthStore()
 const contact = useContactStore()
+const convo = useConversationStore()
 
 onMounted(() => {
   if (auth.token) wsClient.connect(auth.token)
-  contact.fetchAll().catch(() => { /* surfaced in views */ })
+  contact.fetchAll().then(() => {
+    // Derive peer info from friends list for existing conversations
+    convo.populatePeerFromFriends(contact.friends)
+  }).catch(() => { /* surfaced in views */ })
 
   wsClient.on('online', (ids) => {
     const map: Record<string, boolean> = {}

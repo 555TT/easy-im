@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+
 	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
 	"github.com/pkg/errors"
 
@@ -27,8 +28,6 @@ func NewGetChatLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCha
 
 // GetChatLog 获取会话记录
 func (l *GetChatLogLogic) GetChatLog(in *im.GetChatLogReq) (*im.GetChatLogResp, error) {
-	// todo: add your logic here and delete this line
-
 	// 根据 ID
 	if in.MsgId != "" {
 		chatLog, err := l.svcCtx.ChatLogModel.FindOne(l.ctx, in.MsgId)

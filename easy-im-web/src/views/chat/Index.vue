@@ -5,9 +5,11 @@ import ConversationList from './components/ConversationList.vue'
 import ChatPanel from './components/ChatPanel.vue'
 import EmptyChat from './components/EmptyChat.vue'
 import { useConversationStore } from '@/stores/conversation'
+import { useContactStore } from '@/stores/contact'
 
 const route = useRoute()
 const convo = useConversationStore()
+const contact = useContactStore()
 
 const cid = computed(() => {
   const fromRoute = (route.params.conversationId as string) || ''
@@ -16,6 +18,8 @@ const cid = computed(() => {
 
 onMounted(async () => {
   await convo.fetchAll().catch(() => {})
+  // Derive peer info from friends list (contact.fetchAll runs in MainLayout)
+  convo.populatePeerFromFriends(contact.friends)
   if (cid.value) convo.setCurrent(cid.value)
 })
 

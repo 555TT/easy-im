@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Conversation } from '@/types/domain'
+import type { Friend } from '@/types/domain'
 import * as imApi from '@/api/im'
 import { ChatType } from '@/types/domain'
 
@@ -28,6 +29,22 @@ export const useConversationStore = defineStore('conversation', () => {
       lastTime: 0,
       unread: 0,
     }))
+  }
+
+  /**
+   * Derive peerUserId / peerNickname from conversationId + friends list.
+   * Call this after both fetchAll (conversations) and contact.fetchAll complete.
+   */
+  function populatePeerFromFriends(friends: Friend[]): void {
+    list.value.forEach((c) => {
+      if (c.peerUserId) return
+      const peer = friends.find((f) => c.conversationId.includes(f.userId))
+      if (peer) {
+        c.peerUserId = peer.userId
+        c.peerNickname = peer.nickname
+        c.peerAvatar = peer.avatar
+      }
+    })
   }
 
   function setCurrent(id: string): void {
@@ -58,5 +75,5 @@ export const useConversationStore = defineStore('conversation', () => {
     if (c) c.unread = 0
   }
 
-  return { list, currentId, sorted, current, fetchAll, setCurrent, upsert, touch, clearUnread }
+  return { list, currentId, sorted, current, fetchAll, populatePeerFromFriends, setCurrent, upsert, touch, clearUnread }
 })
