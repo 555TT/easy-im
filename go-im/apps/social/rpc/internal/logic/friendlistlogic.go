@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/models"
 	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
@@ -26,7 +27,6 @@ func NewFriendListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Friend
 }
 
 func (l *FriendListLogic) FriendList(in *social.FriendListReq) (*social.FriendListResp, error) {
-	// todo: add your logic here and delete this line
 	// 查询 friend 列表
 	var friendList []models.Friend
 	result := l.svcCtx.CSvc.DB.Where("user_id = ?", in.UserId).Find(&friendList)
