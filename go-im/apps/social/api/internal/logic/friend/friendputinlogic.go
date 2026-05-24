@@ -3,6 +3,7 @@ package friend
 import (
 	"context"
 	"regexp"
+	"strings"
 
 	"github.com/peninsula12/easy-im/go-im/apps/social/api/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/social/api/internal/types"
@@ -35,20 +36,18 @@ func NewFriendPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 
 func (l *FriendPutInLogic) FriendPutIn(req *types.FriendPutInReq) (resp *types.FriendPutInResp, err error) {
 	uid := ctxdata.GetUId(l.ctx)
+	phone := strings.TrimSpace(req.Phone)
+	reqMsg := strings.TrimSpace(req.ReqMsg)
 
-	// 1. 手机号基本格式校验
-	if !phoneRegexp.MatchString(req.Phone) {
+	if !phoneRegexp.MatchString(phone) {
 		return nil, errors.WithStack(xerr.ParamError)
 	}
-	logx.Infof("问题排查phone: %s", req.Phone)
-	// 2. 通过手机号查目标用户
 	findResp, err := l.svcCtx.User.FindUser(l.ctx, &user.FindUserReq{
-		Phone: req.Phone,
+		Phone: phone,
 	})
 	if err != nil {
 		return nil, err
 	}
-	logx.Infof("问题排查findResp: %+v", findResp)
 	if len(findResp.Users) == 0 || findResp.Users[0].Id == "" {
 		return nil, errors.WithStack(xerr.FriendPhoneNotRegistered)
 	}
@@ -63,7 +62,7 @@ func (l *FriendPutInLogic) FriendPutIn(req *types.FriendPutInReq) (resp *types.F
 	_, err = l.svcCtx.Social.FriendPutIn(l.ctx, &social.FriendPutInReq{
 		UserId:  uid,
 		ReqUid:  targetUid,
-		ReqMsg:  req.ReqMsg,
+		ReqMsg:  reqMsg,
 		ReqTime: req.ReqTime,
 	})
 	if err != nil {

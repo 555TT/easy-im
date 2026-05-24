@@ -43,16 +43,14 @@ export const useConversationStore = defineStore('conversation', () => {
       friendMap.set(f.userId, f)
     }
     list.value.forEach((c) => {
-      if (c.peerUserId) return
       const parts = c.conversationId.split('_')
       if (parts.length !== 2) return
-      // Try both parts — one of them is the peer (friend)
       const peer = friendMap.get(parts[0]) || friendMap.get(parts[1])
-      if (peer) {
-        c.peerUserId = peer.userId
-        c.peerNickname = peer.nickname
-        c.peerAvatar = peer.avatar
-      }
+      if (!peer) return
+
+      c.peerUserId = peer.userId
+      c.peerNickname = peer.remark || peer.nickname || ''
+      c.peerAvatar = peer.avatar
     })
   }
 

@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/logic/user"
+	logic "github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/logic"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/user"
 )
@@ -24,36 +24,36 @@ func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {
 }
 
 func (s *UserServer) Ping(ctx context.Context, in *user.Request) (*user.Response, error) {
-	l := userlogic.NewPingLogic(ctx, s.svcCtx)
+	l := logic.NewPingLogic(ctx, s.svcCtx)
 	return l.Ping(in)
 }
 
 func (s *UserServer) Login(ctx context.Context, in *user.LoginReq) (*user.LoginResp, error) {
-	l := userlogic.NewLoginLogic(ctx, s.svcCtx)
+	l := logic.NewLoginLogic(ctx, s.svcCtx)
 	return l.Login(in)
 }
 
 func (s *UserServer) Register(ctx context.Context, in *user.RegisterReq) (*user.RegisterResp, error) {
-	l := userlogic.NewRegisterLogic(ctx, s.svcCtx)
+	l := logic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
 
 func (s *UserServer) GetUserInfo(ctx context.Context, in *user.GetUserInfoReq) (*user.GetUserInfoResp, error) {
-	l := userlogic.NewGetUserInfoLogic(ctx, s.svcCtx)
+	l := logic.NewGetUserInfoLogic(ctx, s.svcCtx)
 	return l.GetUserInfo(in)
 }
 
 func (s *UserServer) FindUser(ctx context.Context, in *user.FindUserReq) (*user.FindUserResp, error) {
-	l := userlogic.NewFindUserLogic(ctx, s.svcCtx)
+	l := logic.NewFindUserLogic(ctx, s.svcCtx)
 	return l.FindUser(in)
 }
 
 func (s *UserServer) UpdateUserProfile(ctx context.Context, in *user.UpdateUserProfileReq) (*user.UpdateUserProfileResp, error) {
-	l := userlogic.NewUpdateUserProfileLogic(ctx, s.svcCtx)
+	l := logic.NewUpdateUserProfileLogic(ctx, s.svcCtx)
 	return l.UpdateUserProfile(in)
 }
 
 func (s *UserServer) UpdateUserPassword(ctx context.Context, in *user.UpdateUserPasswordReq) (*user.UpdateUserPasswordResp, error) {
-	l := userlogic.NewUpdateUserPasswordLogic(ctx, s.svcCtx)
+	l := logic.NewUpdateUserPasswordLogic(ctx, s.svcCtx)
 	return l.UpdateUserPassword(in)
 }

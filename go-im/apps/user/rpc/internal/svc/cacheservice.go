@@ -3,7 +3,6 @@ package svc
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/internal/config"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/models"
 	"github.com/peninsula12/easy-im/go-im/pkg/utils"
@@ -53,64 +52,56 @@ func (s *CacheService) SetUserCache(user *models.User, key string) error {
 // GetUserByPhone 业务逻辑层
 func (s *CacheService) GetUserByPhone(user *models.User, phone string) error {
 	cacheKey := "user_phone:" + phone
-	// 处理缓存
-	err := s.GetUserCache(user, cacheKey)
-	if err == nil {
+	if err := s.GetUserCache(user, cacheKey); err == nil {
 		return nil
 	}
 
-	err = s.DB.Where("phone = (?)", phone).Find(user).Error
-	if err != nil {
+	if err := s.DB.Where("phone = ?", phone).First(user).Error; err != nil {
 		return err
 	}
-	// 更新缓存
-	err = s.SetUserCache(user, cacheKey)
-	if err != nil {
-		return err
-	}
-	return nil
+	return s.SetUserCache(user, cacheKey)
 }
 
 func (s *CacheService) GetUserByIds(users *[]models.User, ids []string) error {
+	if len(ids) == 0 {
+		*users = []models.User{}
+		return nil
+	}
+
+	orderedUsers := make([]models.User, 0, len(ids))
 	for _, id := range ids {
 		cacheKey := "user_id:" + id
 		var user models.User
-		// 处理缓存
-		err := s.GetUserCache(&user, cacheKey)
-		if err == nil {
-			*users = append(*users, user)
+		if err := s.GetUserCache(&user, cacheKey); err == nil {
+			orderedUsers = append(orderedUsers, user)
 			continue
 		}
-		fmt.Println(ids, id)
-		err = s.DB.Where("id = ?", id).First(&user).Error
+
+		err := s.DB.Where("id = ?", id).First(&user).Error
 		if err != nil {
+			if err == gorm.ErrRecordNotFound {
+				continue
+			}
 			return err
 		}
-		err = s.SetUserCache(&user, cacheKey)
-		if err != nil {
+		if err := s.SetUserCache(&user, cacheKey); err != nil {
 			return err
 		}
-		*users = append(*users, user)
+		orderedUsers = append(orderedUsers, user)
 	}
+	*users = orderedUsers
 	return nil
 }
 
 func (s *CacheService) GetUserByName(user *models.User, name string) error {
 	cacheKey := "user_name:" + name
-	err := s.GetUserCache(user, cacheKey)
-	if err == nil {
+	if err := s.GetUserCache(user, cacheKey); err == nil {
 		return nil
 	}
-	err = s.DB.Where("nickname = (?)", name).Find(user).Error
-	if err != nil {
-		fmt.Println(err)
+	if err := s.DB.Where("nickname = ?", name).First(user).Error; err != nil {
 		return err
 	}
-	err = s.SetUserCache(user, cacheKey)
-	if err != nil {
-		return err
-	}
-	return nil
+	return s.SetUserCache(user, cacheKey)
 }
 
 func (s *CacheService) UpdateUserProfile(userID, nickname string, sex int8, email string) error {

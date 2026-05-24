@@ -2,11 +2,15 @@ package user
 
 import (
 	"context"
+	"strings"
+
 	"github.com/jinzhu/copier"
 	"github.com/peninsula12/easy-im/go-im/apps/user/api/internal/svc"
 	"github.com/peninsula12/easy-im/go-im/apps/user/api/internal/types"
 	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/user"
 	"github.com/peninsula12/easy-im/go-im/pkg/status"
+	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -26,10 +30,15 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
-	// todo: add your logic here and delete this line
+	phone := strings.TrimSpace(req.Phone)
+	password := strings.TrimSpace(req.Password)
+	if phone == "" || password == "" {
+		return nil, errors.WithStack(xerr.ParamError)
+	}
+
 	loginResp, err := l.svcCtx.User.Login(l.ctx, &user.LoginReq{
-		Phone:    req.Phone,
-		Password: req.Password,
+		Phone:    phone,
+		Password: password,
 	})
 	if err != nil {
 		return nil, err

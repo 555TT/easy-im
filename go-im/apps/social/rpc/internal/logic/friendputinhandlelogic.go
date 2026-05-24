@@ -36,7 +36,7 @@ func (l *FriendPutInHandleLogic) FriendPutInHandle(in *social.FriendPutInHandleR
 	var friendReq models.FriendRequest
 	err := l.svcCtx.CSvc.DB.Where("id = ? and handle_result = ?", in.FriendReqId, status.PendingHandlerResult).First(&friendReq).Error
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.WithStack(xerr.FindFriendByIdErr)
 		}
 		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend by id %v err %v", in.FriendReqId, err)

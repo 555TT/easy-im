@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import ConversationList from './components/ConversationList.vue'
 import ChatPanel from './components/ChatPanel.vue'
@@ -10,6 +11,7 @@ import { useContactStore } from '@/stores/contact'
 const route = useRoute()
 const convo = useConversationStore()
 const contact = useContactStore()
+const { friends } = storeToRefs(contact)
 
 const cid = computed(() => {
   const fromRoute = (route.params.conversationId as string) || ''
@@ -18,10 +20,17 @@ const cid = computed(() => {
 
 onMounted(async () => {
   await convo.fetchAll().catch(() => {})
-  // Derive peer info from friends list (contact.fetchAll runs in MainLayout)
-  convo.populatePeerFromFriends(contact.friends)
+  convo.populatePeerFromFriends(friends.value)
   if (cid.value) convo.setCurrent(cid.value)
 })
+
+watch(
+  friends,
+  (nextFriends) => {
+    convo.populatePeerFromFriends(nextFriends)
+  },
+  { deep: true },
+)
 
 watch(
   () => route.params.conversationId,

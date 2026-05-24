@@ -216,63 +216,48 @@ func TestUpdateUserProfile_AllowsProfileOnlyUpdateWithoutPasswords(t *testing.T)
 	}
 }
 
-func TestUpdateUserProfile_RejectsMissingOldPassword(t *testing.T) {
-	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
-		UpdateUserProfile(&user.UpdateUserProfileReq{
+func TestUpdateUserPassword_RejectsMissingOldPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserPasswordLogic(context.Background(), svcCtx).
+		UpdateUserPassword(&user.UpdateUserPasswordReq{
 			UserId:      "1838501776039350272",
-			Nickname:    "valid-name",
-			Sex:         1,
-			Email:       "valid@example.com",
 			NewPassword: "newpass123",
 		})
-	assertCodeError(t, err, xerr.PasswordRequired)
+	assertCodeError(t, err, xerr.EmptyOldPassword)
 }
 
-func TestUpdateUserProfile_RejectsMissingNewPassword(t *testing.T) {
-	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
-		UpdateUserProfile(&user.UpdateUserProfileReq{
+func TestUpdateUserPassword_RejectsMissingNewPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserPasswordLogic(context.Background(), svcCtx).
+		UpdateUserPassword(&user.UpdateUserPasswordReq{
 			UserId:      "1838501776039350272",
-			Nickname:    "valid-name",
-			Sex:         1,
-			Email:       "valid@example.com",
 			OldPassword: "oldpass123",
 		})
-	assertCodeError(t, err, xerr.PasswordRequired)
+	assertCodeError(t, err, xerr.EmptyNewPassword)
 }
 
-func TestUpdateUserProfile_RejectsUnchangedPassword(t *testing.T) {
-	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
-		UpdateUserProfile(&user.UpdateUserProfileReq{
+func TestUpdateUserPassword_RejectsUnchangedPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserPasswordLogic(context.Background(), svcCtx).
+		UpdateUserPassword(&user.UpdateUserPasswordReq{
 			UserId:      "1838501776039350272",
-			Nickname:    "valid-name",
-			Sex:         1,
-			Email:       "valid@example.com",
 			OldPassword: "samepass123",
 			NewPassword: "samepass123",
 		})
 	assertCodeError(t, err, xerr.PasswordUnchanged)
 }
 
-func TestUpdateUserProfile_RejectsShortNewPassword(t *testing.T) {
-	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
-		UpdateUserProfile(&user.UpdateUserProfileReq{
+func TestUpdateUserPassword_RejectsShortNewPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserPasswordLogic(context.Background(), svcCtx).
+		UpdateUserPassword(&user.UpdateUserPasswordReq{
 			UserId:      "1838501776039350272",
-			Nickname:    "valid-name",
-			Sex:         1,
-			Email:       "valid@example.com",
 			OldPassword: "oldpass123",
 			NewPassword: "12345",
 		})
 	assertCodeError(t, err, xerr.PasswordTooShort)
 }
 
-func TestUpdateUserProfile_RejectsWrongOldPassword(t *testing.T) {
-	_, err := logic.NewUpdateUserProfileLogic(context.Background(), svcCtx).
-		UpdateUserProfile(&user.UpdateUserProfileReq{
+func TestUpdateUserPassword_RejectsWrongOldPassword(t *testing.T) {
+	_, err := logic.NewUpdateUserPasswordLogic(context.Background(), svcCtx).
+		UpdateUserPassword(&user.UpdateUserPasswordReq{
 			UserId:      "1838501776039350272",
-			Nickname:    "valid-name",
-			Sex:         1,
-			Email:       "valid@example.com",
 			OldPassword: "wrong-password",
 			NewPassword: "newpass123",
 		})
