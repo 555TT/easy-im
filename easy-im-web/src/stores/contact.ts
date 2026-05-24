@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Friend, FriendRequest } from '@/types/domain'
 import * as socialApi from '@/api/social'
+import { mapFriendDTO } from '@/utils/contact'
 
 export const useContactStore = defineStore('contact', () => {
   const friends = ref<Friend[]>([])
@@ -19,14 +20,7 @@ export const useContactStore = defineStore('contact', () => {
       socialApi.listFriendRequests(),
     ])
     onlineMap.value = ol.onlineList ?? {}
-    friends.value = (fl.list ?? []).map((f) => ({
-      id: f.id || f.friend_uid || '',
-      userId: f.friend_uid ?? '',
-      nickname: f.nickname ?? '',
-      avatar: f.avatar ?? '',
-      remark: f.remark ?? '',
-      online: !!(onlineMap.value[f.friend_uid ?? ''] ?? false),
-    }))
+    friends.value = (fl.list ?? []).map((f) => mapFriendDTO(f, onlineMap.value))
     requests.value = (reqs.list ?? []).map((r) => ({
       id: r.id ?? '',
       fromUserId: r.req_uid ?? '',

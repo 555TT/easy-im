@@ -44,9 +44,9 @@ function showRequests(): void {
         class="item"
         @click="go(f.userId)"
       >
-        <Avatar :src="f.avatar" :name="f.nickname || f.userId" :size="36" />
+        <Avatar :src="f.avatar" :name="f.nickname" :size="36" />
         <div class="body">
-          <div class="name">{{ f.remark || f.nickname || f.userId }}</div>
+          <div class="name">{{ f.remark || f.nickname }}</div>
           <div class="sub">
             <span class="dot" :class="{ on: f.online }" />
             {{ f.online ? '在线' : '离线' }}

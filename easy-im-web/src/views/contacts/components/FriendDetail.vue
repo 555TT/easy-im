@@ -42,8 +42,8 @@ async function startChat(): Promise<void> {
   <section class="detail">
     <div v-if="!friend" class="empty">请选择一位联系人</div>
     <div v-else class="body">
-      <Avatar :src="friend.avatar" :name="friend.nickname || friend.userId" :size="72" />
-      <div class="name">{{ friend.remark || friend.nickname || friend.userId }}</div>
+      <Avatar :src="friend.avatar" :name="friend.nickname" :size="72" />
+      <div class="name">{{ friend.remark || friend.nickname }}</div>
       <div class="meta">
         <span>ID: {{ friend.userId }}</span>
         <span class="state">
