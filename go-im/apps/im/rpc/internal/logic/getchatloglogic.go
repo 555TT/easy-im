@@ -51,12 +51,13 @@ func (l *GetChatLogLogic) GetChatLog(in *im.GetChatLogReq) (*im.GetChatLogResp, 
 		}, nil
 	}
 	// 根据时间段分段查询
+	logx.Infof("getChatLog req %+v", in)
 	data, err := l.svcCtx.ChatLogModel.ListBySendTime(l.ctx, in.ConversationId, in.StartSendTime,
 		in.EndSendTime, in.Count)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "listBySendTime err %v,req %v", err, in)
 	}
-
+	logx.Infof("getChatLog res %+v", data)
 	res := make([]*im.ChatLog, 0, len(data))
 	for _, v := range data {
 		res = append(res, &im.ChatLog{
