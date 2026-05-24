@@ -251,12 +251,17 @@ func (s *Server) addConn(conn *Conn, req *http.Request) {
 
 	// 验证用户是否之前登入过
 	if c := s.userToConn[uid]; c != nil {
-		// 关闭之前的连接
+		delete(s.connToUser, c)
 		_ = c.Close()
 	}
 
 	s.connToUser[conn] = uid
 	s.userToConn[uid] = conn
+	if s.opt.onlineTracker != nil {
+		if err := s.opt.onlineTracker.MarkOnline(context.Background(), uid); err != nil {
+			s.Errorf("mark online err: %v, userId: %v", err, uid)
+		}
+	}
 }
 
 func (s *Server) Close(conn *Conn) {
@@ -270,7 +275,14 @@ func (s *Server) Close(conn *Conn) {
 		return
 	}
 	delete(s.connToUser, conn)
-	delete(s.userToConn, uid)
+	if s.userToConn[uid] == conn {
+		delete(s.userToConn, uid)
+	}
+	if s.opt.onlineTracker != nil {
+		if err := s.opt.onlineTracker.MarkOffline(context.Background(), uid); err != nil {
+			s.Errorf("mark offline err: %v, userId: %v", err, uid)
+		}
+	}
 
 	_ = conn.Close()
 }

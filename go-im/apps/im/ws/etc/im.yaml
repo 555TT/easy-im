@@ -1,6 +1,11 @@
 Name: im.ws
 ListenOn: 0.0.0.0:10090
 
+Redisx:
+  Host: 127.0.0.1:16379
+  Pass: easy-chat
+  Type: node
+
 JwtAuth:
   AccessSecret:  easy-chat
 Mongo:

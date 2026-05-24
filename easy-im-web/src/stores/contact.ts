@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import type { Friend, FriendRequest } from '@/types/domain'
 import * as socialApi from '@/api/social'
 import { mapFriendDTO } from '@/utils/contact'
+import { buildOnlineMap } from '@/utils/online'
 
 export const useContactStore = defineStore('contact', () => {
   const friends = ref<Friend[]>([])
@@ -35,10 +36,14 @@ export const useContactStore = defineStore('contact', () => {
     setOnline(ol.onlineList ?? {})
   }
 
+  function setOnlineUsers(userIds: string[]): void {
+    setOnline(buildOnlineMap(friends.value.map((f) => f.userId), userIds))
+  }
+
   function setOnline(map: Record<string, boolean>): void {
     onlineMap.value = map
     friends.value.forEach((f) => (f.online = !!map[f.userId]))
   }
 
-  return { friends, requests, onlineMap, pendingRequestCount, fetchAll, refreshOnline, setOnline }
+  return { friends, requests, onlineMap, pendingRequestCount, fetchAll, refreshOnline, setOnlineUsers, setOnline }
 })

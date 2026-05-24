@@ -21,7 +21,7 @@ func (a *authentication) Auth(w http.ResponseWriter, r *http.Request) bool {
 func (a *authentication) UserId(r *http.Request) string {
 	query := r.URL.Query()
 	if query != nil && query["userId"] != nil {
-		return fmt.Sprintf("%v", query["userId"])
+		return query.Get("userId")
 	}
 	return fmt.Sprintf("%v", time.Now().UnixMilli())
 }

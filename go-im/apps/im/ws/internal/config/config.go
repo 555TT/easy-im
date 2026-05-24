@@ -2,12 +2,14 @@ package config
 
 import (
 	"github.com/zeromicro/go-zero/core/service"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type Config struct {
 	service.ServiceConf
 
 	ListenOn string
+	Redisx   redis.RedisConf
 
 	JwtAuth struct {
 		AccessSecret string

@@ -17,8 +17,8 @@ onMounted(() => {
     convo.populatePeerFromFriends(contact.friends)
   }).catch(() => { /* surfaced in views */ })
 
-  wsClient.on('online', () => {
-    contact.refreshOnline().catch(() => {})
+  wsClient.on('online', (userIds) => {
+    contact.setOnlineUsers(userIds)
   })
 })
 </script>

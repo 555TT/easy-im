@@ -1,14 +1,23 @@
 package websocket
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type ServerOption func(opt *serverOption)
 
+type OnlineTracker interface {
+	MarkOnline(ctx context.Context, uid string) error
+	MarkOffline(ctx context.Context, uid string) error
+}
+
 type serverOption struct {
 	Authentication
-	ack        AckType
-	ackTimeout time.Duration
-	patten     string
+	ack           AckType
+	ackTimeout    time.Duration
+	patten        string
+	onlineTracker OnlineTracker
 
 	maxConnectionIdle time.Duration
 
@@ -53,5 +62,11 @@ func WithServerMaxConnectionIdle(maxConnection time.Duration) ServerOption {
 		if maxConnection > 0 {
 			opt.maxConnectionIdle = maxConnection
 		}
+	}
+}
+
+func WithOnlineTracker(tracker OnlineTracker) ServerOption {
+	return func(opt *serverOption) {
+		opt.onlineTracker = tracker
 	}
 }
