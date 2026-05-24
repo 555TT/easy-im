@@ -59,6 +59,6 @@ func (l *FriendsOnlineLogic) FriendsOnline(req *types.FriendsOnlineReq) (resp *t
 		}
 
 	}
-	resp.OnlineList = resOnLineList
+	resp = &types.FriendsOnlineResp{OnlineList: resOnLineList}
 	return
 }
