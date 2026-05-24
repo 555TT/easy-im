@@ -15,13 +15,13 @@ func Push(svc *svc.ServiceContext) websocket.HandlerFunc {
 			_ = srv.Send(websocket.NewErrMessage(err))
 			return
 		}
-		// 发送目标
-		// todo: 这里的recv是一个切片
 		switch data.ChatType {
 		case status.SingleChatType:
-			err := single(srv, &data, data.RecvId)
-			if err != nil {
-				srv.Error(err)
+			for _, uid := range []string{data.SendId, data.RecvId} {
+				err := single(srv, &data, uid)
+				if err != nil {
+					srv.Error(err)
+				}
 			}
 		case status.GroupChatType:
 			err := group(srv, &data)
@@ -29,44 +29,44 @@ func Push(svc *svc.ServiceContext) websocket.HandlerFunc {
 				srv.Error(err)
 			}
 		default:
-
 		}
-
 	}
-
 }
 
 func single(srv *websocket.Server, data *ws.Push, recvId string) error {
 	recvConn := srv.GetConn(recvId)
-	if recvConn == nil {
-		// todo: 目标离线
+	if len(recvConn) == 0 || recvConn[0] == nil {
 		return nil
 	}
 	srv.Infof("push msg %v", data)
 
-	return srv.Send(websocket.NewMessage(data.SendId, &ws.Chat{
-		ConversationId: data.ConversationId,
-		ChatType:       data.ChatType,
-		SendTime:       data.SendTime,
-		Msg: ws.Msg{
-			MsgId:       data.MsgId,
-			MType:       data.MType,
-			Content:     data.Content,
-			ReadRecords: data.ReadRecords,
+	return srv.Send(&websocket.Message{
+		FrameType: websocket.FrameData,
+		Method:    "push",
+		FromId:    data.SendId,
+		Data: map[string]any{
+			"conversationId": data.ConversationId,
+			"chatType":       data.ChatType,
+			"sendId":         data.SendId,
+			"recvId":         recvId,
+			"recvIds":        data.RecvIds,
+			"sendTime":       data.SendTime,
+			"msgId":          data.MsgId,
+			"readRecords":    data.ReadRecords,
+			"contentType":    data.ContentType,
+			"mType":          data.MType,
+			"content":        data.Content,
 		},
-	}), recvConn[0])
-
+	}, recvConn[0])
 }
 
 func group(srv *websocket.Server, data *ws.Push) (err error) {
-	//fmt.Println("group push")
 	for _, id := range data.RecvIds {
 		func(id string) {
 			srv.Schedule(func() {
 				err = single(srv, data, id)
 			})
 		}(id)
-		//fmt.Println(id)
 	}
 	return
 }
